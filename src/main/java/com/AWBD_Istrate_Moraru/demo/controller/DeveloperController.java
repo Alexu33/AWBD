@@ -1,15 +1,18 @@
 package com.AWBD_Istrate_Moraru.demo.controller;
 
 import com.AWBD_Istrate_Moraru.demo.dto.DeveloperDto;
-import com.AWBD_Istrate_Moraru.demo.entity.Developer;
 import com.AWBD_Istrate_Moraru.demo.service.DeveloperService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequestMapping("/developers")
 public class DeveloperController {
@@ -29,6 +32,7 @@ public class DeveloperController {
     @RequestMapping("")
     public String developerList(Model model) {
         List<DeveloperDto> developerDtos = developerService.findAll();
+        log.info("Developer List: {}", developerDtos.size());
         model.addAttribute("developerDtos", developerDtos);
         return "developerList";
     }
