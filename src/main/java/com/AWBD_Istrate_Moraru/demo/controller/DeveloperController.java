@@ -51,6 +51,6 @@ public class DeveloperController {
     @RequestMapping("/delete/{id}")
     public String deleteById(@PathVariable Long id){
         developerService.deleteById(id);
-        return "redirect:/products";
+        return "redirect:/developers";
     }
 }
