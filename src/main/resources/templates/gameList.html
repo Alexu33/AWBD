@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset = "UTF-8">
+    <meta name = "viewport" content = "width=device-width, initial-scale = 1.0">
+    <meta http-equiv = "X-UA-Compatible" content = "ie=edge">
+
+    <link href="https://fonts.googleapis.com/css?family=Russo+One" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Cabin" rel="stylesheet">
+
+    <link rel = "stylesheet" href = "main-style.css">
+    <script src = "main.js"></script>
+
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/webjars/font-awesome/6.5.2/css/all.min.css"/>
+
+    <title> Steme&trade; </title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+<div class = "grid-div">
+    <div class = "sidebar">
+        <h2 class = "text main-div">Pagina principala</h2>
+        <br>
+        <p class = "genre-list-top">GENRES</p>
+        <ul class = "genre-list">
+            <li class = "genre" th:each="genre, stat : ${genreDtos}">
+                <a th:href="@{'/genres/' + ${genre.id}}"  th:text="${genre.name}">Genre</a>
+            </li>
+        </ul>
+    </div>
+
+    <h1 class = "text site-title" id = "logo">
+        <img id = "logo-img" src = "logo.png" alt = "Steme Logo">
+        Steme
+    </h1>
+
+    <div class = "friends-list-div">
+        <h2 class = "text text-friends">Friends</h2>
+
+        <div class = "text" id = "friends-panel">
+            Register to add and chat with friends.<br><br>
+            <button id = "register-button">Register</button>
+        </div>
+    </div>
+
+    <div class="container textbox">
+        <div class="game-div" th:each="game, stat : ${gameDtos}">
+            <a th:href="@{'/games/' + ${game.id}}">
+                <div class="game-photo">
+                    <img src="game.png">
+                </div>
+            </a>
+            <div class="game-texts">
+                <p class="game-title text" th:text="${game.title}">Title</p>
+                <p class="game-desc text" th:text="${game.description}">Description</p>
+
+                <div class="game-crud-buttons-div">
+                    <a th:href="@{'/games/edit/' + ${game.id}}" class="game-crud-button btn btn-sm btn-primary">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                    <a th:href="@{'/games/delete/' + ${game.id}}" class="game-crud-button btn btn-sm btn-danger">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+
+            <p class="game-price" th:text="${game.price + '$'}">Price</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

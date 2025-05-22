@@ -1,7 +1,9 @@
 package com.AWBD_Istrate_Moraru.demo.controller;
 
 import com.AWBD_Istrate_Moraru.demo.dto.GameDto;
+import com.AWBD_Istrate_Moraru.demo.dto.GenreDto;
 import com.AWBD_Istrate_Moraru.demo.service.GameService;
+import com.AWBD_Istrate_Moraru.demo.service.GenreService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,9 +19,11 @@ import java.util.List;
 @RequestMapping("/games")
 public class GameController {
     private GameService gameService;
+    private GenreService genreService;
 
-    public GameController(GameService gameService) {
+    public GameController(GameService gameService, GenreService genreService) {
         this.gameService = gameService;
+        this.genreService = genreService;
     }
 
     @PostMapping("")
@@ -34,6 +38,10 @@ public class GameController {
         List<GameDto> gameDtos = gameService.findAll();
         log.info("Game List: {}", gameDtos.size());
         model.addAttribute("gameDtos", gameDtos);
+
+        List<GenreDto> genreDtos = genreService.findAll();
+        model.addAttribute("genreDtos", genreDtos);
+
         return "gameList";
     }
 
