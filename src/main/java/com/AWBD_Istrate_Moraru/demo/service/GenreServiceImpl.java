@@ -4,11 +4,13 @@ import com.AWBD_Istrate_Moraru.demo.dto.GenreDto;
 import com.AWBD_Istrate_Moraru.demo.entity.Genre;
 import com.AWBD_Istrate_Moraru.demo.mapper.GenreMapper;
 import com.AWBD_Istrate_Moraru.demo.repository.GenreRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class GenreServiceImpl implements GenreService {
     GenreRepository genreRepository;
     GenreMapper genreMapper;

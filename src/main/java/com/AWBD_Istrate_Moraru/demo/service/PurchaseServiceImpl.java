@@ -4,11 +4,13 @@ import com.AWBD_Istrate_Moraru.demo.dto.PurchaseDto;
 import com.AWBD_Istrate_Moraru.demo.entity.Purchase;
 import com.AWBD_Istrate_Moraru.demo.mapper.PurchaseMapper;
 import com.AWBD_Istrate_Moraru.demo.repository.PurchaseRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class PurchaseServiceImpl implements PurchaseService {
     PurchaseRepository purchaseRepository;
     PurchaseMapper purchaseMapper;

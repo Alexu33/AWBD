@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public interface GameService {
     GameDto save(GameDto gameDto);
 

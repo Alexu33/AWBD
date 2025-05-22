@@ -4,11 +4,13 @@ import com.AWBD_Istrate_Moraru.demo.dto.ReviewDto;
 import com.AWBD_Istrate_Moraru.demo.entity.Review;
 import com.AWBD_Istrate_Moraru.demo.mapper.ReviewMapper;
 import com.AWBD_Istrate_Moraru.demo.repository.ReviewRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class ReviewServiceImpl implements ReviewService {
     ReviewRepository reviewRepository;
     ReviewMapper reviewMapper;

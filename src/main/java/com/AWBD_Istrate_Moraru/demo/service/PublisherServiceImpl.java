@@ -4,11 +4,13 @@ import com.AWBD_Istrate_Moraru.demo.dto.PublisherDto;
 import com.AWBD_Istrate_Moraru.demo.entity.Publisher;
 import com.AWBD_Istrate_Moraru.demo.mapper.PublisherMapper;
 import com.AWBD_Istrate_Moraru.demo.repository.PublisherRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class PublisherServiceImpl implements PublisherService {
     PublisherRepository publisherRepository;
     PublisherMapper publisherMapper;

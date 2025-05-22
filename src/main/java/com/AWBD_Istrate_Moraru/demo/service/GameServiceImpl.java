@@ -4,11 +4,13 @@ import com.AWBD_Istrate_Moraru.demo.dto.GameDto;
 import com.AWBD_Istrate_Moraru.demo.entity.Game;
 import com.AWBD_Istrate_Moraru.demo.mapper.GameMapper;
 import com.AWBD_Istrate_Moraru.demo.repository.GameRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class GameServiceImpl implements GameService {
     GameRepository gameRepository;
     GameMapper gameMapper;

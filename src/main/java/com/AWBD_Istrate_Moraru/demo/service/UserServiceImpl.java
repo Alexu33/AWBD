@@ -4,11 +4,13 @@ import com.AWBD_Istrate_Moraru.demo.dto.UserDto;
 import com.AWBD_Istrate_Moraru.demo.entity.User;
 import com.AWBD_Istrate_Moraru.demo.mapper.UserMapper;
 import com.AWBD_Istrate_Moraru.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class UserServiceImpl implements UserService {
     UserRepository userRepository;
     UserMapper userMapper;
