@@ -8,8 +8,7 @@
     <link href="https://fonts.googleapis.com/css?family=Russo+One" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Cabin" rel="stylesheet">
 
-    <link rel = "stylesheet" href = "main-style.css">
-    <script src = "main.js"></script>
+    <link rel = "stylesheet" href = "/main-style.css">
 
     <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
     <script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
@@ -34,7 +33,7 @@
     </div>
 
     <h1 class = "text site-title" id = "logo">
-        <img id = "logo-img" src = "logo.png" alt = "Steme Logo">
+        <img id = "logo-img" src = "/logo.png" alt = "Steme Logo">
         Steme
     </h1>
 
@@ -43,11 +42,16 @@
 
         <div class = "text" id = "friends-panel">
             Register to add and chat with friends.<br><br>
-            <button id = "register-button">Register</button>
+            <button class = "blue-button" id = "register-button">Register</button>
         </div>
     </div>
 
     <div class="container textbox">
+
+        <a th:href="@{'/games/new'}" class="blue-button">
+            Add a new game
+        </a>
+
         <div class="game-div" th:each="game, stat : ${gameDtos}">
             <a th:href="@{'/games/' + ${game.id}}">
                 <div class="game-photo">

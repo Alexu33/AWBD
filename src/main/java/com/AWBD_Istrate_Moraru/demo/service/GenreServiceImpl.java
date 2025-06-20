@@ -48,6 +48,15 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
+    public List<GenreDto> findAllByIds(List<Long> ids) {
+        List<Genre> genres = genreRepository.findAllById(ids);
+
+        return genres.stream()
+                .map(d -> genreMapper.toDto(d))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void deleteById(Long id) {
         genreRepository.deleteById(id);
     }

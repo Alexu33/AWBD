@@ -21,6 +21,7 @@ public class GameDto {
     private BigDecimal price;
     private PublisherDto publisher;
     private DeveloperDto developer;
+    private List<Long> genreIds;
     private List<GenreDto> genres;
     private List<CartDto> carts;
     private Double averageRating;

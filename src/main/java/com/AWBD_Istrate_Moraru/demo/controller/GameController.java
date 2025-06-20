@@ -2,6 +2,7 @@ package com.AWBD_Istrate_Moraru.demo.controller;
 
 import com.AWBD_Istrate_Moraru.demo.dto.GameDto;
 import com.AWBD_Istrate_Moraru.demo.dto.GenreDto;
+import com.AWBD_Istrate_Moraru.demo.entity.Game;
 import com.AWBD_Istrate_Moraru.demo.service.GameService;
 import com.AWBD_Istrate_Moraru.demo.service.GenreService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,23 @@ public class GameController {
         model.addAttribute("genreDtos", genreDtos);
 
         return "gameList";
+    }
+
+    @RequestMapping("/new")
+    public String gameForm(Model model) {
+        List<GenreDto> genreDtos = genreService.findAll();
+        model.addAttribute("genreDtos", genreDtos);
+
+        model.addAttribute("gameDto", new GameDto());
+        return "gameForm";
+    }
+
+    @PostMapping("/new")
+    public String gameForm(@ModelAttribute GameDto gameDto) {
+        gameDto.setGenres(genreService.findAllByIds(gameDto.getGenreIds()));
+
+        gameService.save(gameDto);
+        return "redirect:/games";
     }
 
     @RequestMapping("/edit/{id}")
