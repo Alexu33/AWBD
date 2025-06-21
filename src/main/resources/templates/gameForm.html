@@ -77,6 +77,18 @@
                                     <input class="form-control" th:field="*{releaseDate}" type="date" placeholder="Release date"/>
                                 </div>
                                 <br>
+                                <div class="form-row">
+                                    <label th:if="${#fields.hasErrors('publisher')}" th:errors="*{publisher}">Error</label>
+                                    <select class="form-control" th:field="*{publisher.id}">
+                                        <option value="">Publisher</option>
+                                        <option th:each="publisherDto : ${publisherDtos}"
+                                                th:value="${publisherDto.id}"
+                                                th:text="${publisherDto.name}"
+                                                th:selected="${gameDto.publisher != null and gameDto.publisher.id == publisherDto.id}">
+                                        </option>
+                                    </select>
+                                </div>
+                                <br>
 
                                 <div class = "d-flex justify-content-center">
                                     <button class="btn btn-primary" type="submit">Submit</button>

@@ -1,6 +1,10 @@
 package com.AWBD_Istrate_Moraru.demo.controller;
 
+import com.AWBD_Istrate_Moraru.demo.dto.GameDto;
+import com.AWBD_Istrate_Moraru.demo.dto.GenreDto;
 import com.AWBD_Istrate_Moraru.demo.dto.PublisherDto;
+import com.AWBD_Istrate_Moraru.demo.service.GameService;
+import com.AWBD_Istrate_Moraru.demo.service.GenreService;
 import com.AWBD_Istrate_Moraru.demo.service.PublisherService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -17,9 +21,13 @@ import java.util.List;
 @RequestMapping("/publishers")
 public class PublisherController {
     private PublisherService publisherService;
+    private GameService gameService;
+    private GenreService genreService;
 
-    public PublisherController(PublisherService publisherService) {
+    public PublisherController(PublisherService publisherService, GameService gameService, GenreService genreService) {
         this.publisherService = publisherService;
+        this.gameService = gameService;
+        this.genreService = genreService;
     }
 
     @PostMapping("")
@@ -35,6 +43,22 @@ public class PublisherController {
         log.info("Publisher List: {}", publisherDtos.size());
         model.addAttribute("publisherDtos", publisherDtos);
         return "publisherList";
+    }
+
+    @RequestMapping("/{id}")
+    public String genreShow(@PathVariable Long id, Model model) {
+
+        List<GenreDto> genreDtos = genreService.findAll();
+        model.addAttribute("genreDtos", genreDtos);
+
+        PublisherDto publisherDto = publisherService.findById(id);
+        model.addAttribute("publisherDto", publisherDto);
+
+        List<GameDto> gameDtos = gameService.findAllByPublisherId(publisherDto.getId());
+        log.info("Game List: {}", gameDtos.size());
+        model.addAttribute("gameDtos", gameDtos);
+
+        return "publisherShow";
     }
 
     @RequestMapping("/edit/{id}")

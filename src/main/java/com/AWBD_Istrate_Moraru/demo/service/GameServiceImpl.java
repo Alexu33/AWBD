@@ -57,6 +57,15 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    public List<GameDto> findAllByPublisherId(Long publisherId) {
+        List<Game> games = gameRepository.findByPublisher_Id(publisherId);
+
+        return games.stream()
+                .map(d -> gameMapper.toDto(d))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void deleteById(Long id) {
         gameRepository.deleteById(id);
     }
