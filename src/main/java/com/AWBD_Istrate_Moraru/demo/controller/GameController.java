@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -66,12 +67,34 @@ public class GameController {
     @RequestMapping("/edit/{id}")
     public String edit(@PathVariable Long id, Model model) {
         GameDto gameDto = gameService.findById(id);
+
+        List<Long> genreIds = gameDto.getGenres()
+                                     .stream()
+                                     .map(GenreDto::getId)
+                                     .collect(Collectors.toList());
+        gameDto.setGenreIds(genreIds);
+
         model.addAttribute("gameDto", gameDto);
 
-        List<GameDto> gameDtos = gameService.findAll();
-        model.addAttribute("gameDtos", gameDtos );
+        List<GenreDto> genreDtos = genreService.findAll();
+        model.addAttribute("genreDtos", genreDtos);
 
         return "gameForm";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String updateGame(@PathVariable Long id, @ModelAttribute GameDto gameDto) {
+        gameDto.setId(id);
+        gameDto.setGenres(genreService.findAllByIds(gameDto.getGenreIds()));
+
+        List<Long> genreIds = gameDto.getGenres()
+                                     .stream()
+                                     .map(GenreDto::getId)
+                                     .collect(Collectors.toList());
+        gameDto.setGenreIds(genreIds);
+
+        gameService.save(gameDto);
+        return "redirect:/games";
     }
 
     @RequestMapping("/delete/{id}")

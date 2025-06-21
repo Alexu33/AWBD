@@ -26,7 +26,11 @@
     </h1>
 
     <div class="container textbox">
-        <form enctype="multipart/form-data" method="post" th:action="@{/games/new}" th:object="${gameDto}">
+        <form enctype="multipart/form-data" method="post"
+              th:action="${gameDto.id} != null
+                            ? @{'/games/edit/' + ${gameDto.id}}
+                            : @{'/games/new'}"
+              th:object="${gameDto}">
             <input th:field="*{id}" type="hidden"/>
             <div class="container" style="margin-top: 50px">
                 <div class="panel panel-default">
@@ -42,7 +46,9 @@
                                     <li class = "genre" th:each="genre: ${genreDtos}">
                                         <input th:field="*{genreIds}"
                                                th:value="${genre.id}"
-                                               type="checkbox"/>
+                                               type="checkbox"
+                                               th:checked="${gameDto.genreIds != null
+                                                            and gameDto.genreIds.contains(genre.id)}"/>
                                         <label
                                                 th:for="${#ids.prev('genreIds')}"
                                                 th:text="${genre.name}">

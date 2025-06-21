@@ -7,7 +7,6 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface GenreMapper {
-    @Mapping(target = "games", ignore = true)
     GenreDto toDto(Genre genre);
 
     Genre toEntity(GenreDto genreDto);
