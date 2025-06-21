@@ -28,13 +28,6 @@ public class GameController {
         this.genreService = genreService;
     }
 
-    @PostMapping("")
-    public String createOrUpdateGame(@ModelAttribute GameDto gameDto) {
-        gameService.save(gameDto);
-
-        return "redirect:/games";
-    }
-
     @RequestMapping("")
     public String gameList(Model model) {
         List<GameDto> gameDtos = gameService.findAll();
@@ -45,6 +38,17 @@ public class GameController {
         model.addAttribute("genreDtos", genreDtos);
 
         return "gameList";
+    }
+
+    @RequestMapping("/{id}")
+    public String gameShow(@PathVariable Long id, Model model) {
+        GameDto gameDto = gameService.findById(id);
+        model.addAttribute("gameDto", gameDto);
+
+        List<GenreDto> genreDtos = genreService.findAll();
+        model.addAttribute("genreDtos", genreDtos);
+
+        return "gameShow";
     }
 
     @RequestMapping("/new")
@@ -86,12 +90,6 @@ public class GameController {
     public String updateGame(@PathVariable Long id, @ModelAttribute GameDto gameDto) {
         gameDto.setId(id);
         gameDto.setGenres(genreService.findAllByIds(gameDto.getGenreIds()));
-
-        List<Long> genreIds = gameDto.getGenres()
-                                     .stream()
-                                     .map(GenreDto::getId)
-                                     .collect(Collectors.toList());
-        gameDto.setGenreIds(genreIds);
 
         gameService.save(gameDto);
         return "redirect:/games";

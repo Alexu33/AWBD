@@ -49,11 +49,12 @@
         </div>
     </div>
 
-    <div class="container textbox">
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="text h2 fw-bold" th:text="${genreDto.name.toUpperCase() + ' GAMES'}"></div>
+    </div>
+    <br>
 
-        <a th:href="@{'/games/new'}" class="blue-button">
-            Add a new game
-        </a>
+    <div class="container textbox">
 
         <div class="game-div" th:each="game, stat : ${gameDtos}">
             <a th:href="@{'/games/' + ${game.id}}">

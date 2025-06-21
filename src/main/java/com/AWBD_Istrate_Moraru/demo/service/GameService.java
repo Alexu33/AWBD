@@ -12,5 +12,7 @@ public interface GameService {
 
     List<GameDto> findAll();
 
+    List<GameDto> findAllByGenreId(Long genreId);
+
     void deleteById(Long id);
 }

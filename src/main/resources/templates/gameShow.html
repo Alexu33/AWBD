@@ -50,33 +50,37 @@
     </div>
 
     <div class="container textbox">
-
-        <a th:href="@{'/games/new'}" class="blue-button">
-            Add a new game
-        </a>
-
-        <div class="game-div" th:each="game, stat : ${gameDtos}">
-            <a th:href="@{'/games/' + ${game.id}}">
+        <div class="game-div">
+            <a th:href="@{'/games/' + ${gameDto.id}}">
                 <div class="game-photo">
                     <img src="/game.png">
                 </div>
             </a>
+
             <div class="game-texts">
-                <p class="game-title text" th:text="${game.title}">Title</p>
-                <p class="game-desc text" th:text="${game.description}">Description</p>
+                <p class="game-title text" th:text="${gameDto.title}">Title</p>
+                <p class="game-desc text" th:text="${gameDto.description}">Description</p>
 
                 <div class="game-crud-buttons-div">
-                    <a th:href="@{'/games/edit/' + ${game.id}}" class="game-crud-button btn btn-sm btn-primary">
+                    <a th:href="@{'/games/edit/' + ${gameDto.id}}" class="game-crud-button btn btn-sm btn-primary">
                         <i class="fa-solid fa-pen"></i>
                     </a>
-                    <a th:href="@{'/games/delete/' + ${game.id}}" class="game-crud-button btn btn-sm btn-danger">
+                    <a th:href="@{'/games/delete/' + ${gameDto.id}}" class="game-crud-button btn btn-sm btn-danger">
                         <i class="fa-solid fa-trash"></i>
                     </a>
                 </div>
             </div>
 
-            <p class="game-price" th:text="${game.price + '$'}">Price</p>
+            <p class="game-price" th:text="${gameDto.price + '$'}">Price</p>
         </div>
+
+        <div class="d-flex text">
+            <div class="text text-sec m-1" th:each="genre, stat : ${gameDto.genres}" th:text="${genre.name}"></div>
+        </div>
+
+        <br>
+
+        <p class="text" th:text="${'Release date: ' + gameDto.releaseDate}">Release date</p>
     </div>
 </div>
 

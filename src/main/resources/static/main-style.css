@@ -53,6 +53,10 @@ body {
     box-shadow: 0px 6px rgba(30, 0, 60, 0.8);
 }
 
+.text.text-sec {
+    background: rgb(0, 60, 140, 0.6)
+}
+
 .form-control {
     background: rgb(193 218 255) !important
 }

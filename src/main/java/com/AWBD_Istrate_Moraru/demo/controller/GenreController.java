@@ -1,6 +1,8 @@
 package com.AWBD_Istrate_Moraru.demo.controller;
 
+import com.AWBD_Istrate_Moraru.demo.dto.GameDto;
 import com.AWBD_Istrate_Moraru.demo.dto.GenreDto;
+import com.AWBD_Istrate_Moraru.demo.service.GameService;
 import com.AWBD_Istrate_Moraru.demo.service.GenreService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -17,9 +19,11 @@ import java.util.List;
 @RequestMapping("/genres")
 public class GenreController {
     private GenreService genreService;
+    private GameService gameService;
 
-    public GenreController(GenreService genreService) {
+    public GenreController(GenreService genreService, GameService gameService) {
         this.genreService = genreService;
+        this.gameService = gameService;
     }
 
     @PostMapping("")
@@ -35,6 +39,22 @@ public class GenreController {
         log.info("Genre List: {}", genreDtos.size());
         model.addAttribute("genreDtos", genreDtos);
         return "genreList";
+    }
+
+    @RequestMapping("/{id}")
+    public String genreShow(@PathVariable Long id, Model model) {
+
+        List<GenreDto> genreDtos = genreService.findAll();
+        model.addAttribute("genreDtos", genreDtos);
+
+        GenreDto genreDto = genreService.findById(id);
+        model.addAttribute("genreDto", genreDto);
+
+        List<GameDto> gameDtos = gameService.findAllByGenreId(genreDto.getId());
+        log.info("Game List: {}", gameDtos.size());
+        model.addAttribute("gameDtos", gameDtos);
+
+        return "genreShow";
     }
 
     @RequestMapping("/edit/{id}")
