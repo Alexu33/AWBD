@@ -48,6 +48,15 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public List<ReviewDto> findAllByGameId(Long gameId) {
+        List<Review> reviews = reviewRepository.findAllByGameId(gameId);
+
+        return reviews.stream()
+                .map(d -> reviewMapper.toDto(d))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void deleteById(Long id) {
         reviewRepository.deleteById(id);
     }

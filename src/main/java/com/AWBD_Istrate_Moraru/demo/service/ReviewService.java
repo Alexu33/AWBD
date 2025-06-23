@@ -12,5 +12,7 @@ public interface ReviewService {
 
     List<ReviewDto> findAll();
 
+    List<ReviewDto> findAllByGameId(Long gameId);
+
     void deleteById(Long id);
 }

@@ -74,19 +74,42 @@
             <p class="game-price" th:text="${gameDto.price + '$'}">Price</p>
         </div>
 
-        <a class="text" th:href="@{'/publishers/' + ${gameDto.publisher.id}}">
-            <div th:text="${'Publisher: ' + gameDto.publisher.name}">Publisher</div>
-        </a>
-
-        <br>
-
-        <div class="d-flex text">
-            <div class="text text-sec m-1" th:each="genre, stat : ${gameDto.genres}" th:text="${genre.name}"></div>
+        <div class="d-flex justify-content-between">
+            <a class="text" th:href="@{'/publishers/' + ${gameDto.publisher.id}}">
+                <div th:text="${'Publisher: ' + gameDto.publisher.name}">Publisher</div>
+            </a>
+            <div class="text" th:text="${'Release date: ' + gameDto.releaseDate}">Release date</div>
         </div>
 
         <br>
 
-        <p class="text" th:text="${'Release date: ' + gameDto.releaseDate}">Release date</p>
+        <div class="d-flex text justify-content-start w-100">
+            <a th:href="@{'/genres/' + ${genre.id}}" class="blue-button m-1 w-auto"
+               th:each="genre, stat : ${gameDto.genres}" th:text="${genre.name}">Genre</a>
+        </div>
+
+        <br>
+
+        <div class="text d-block w-100">
+            <div class = "text h3 fw-bold text-decoration-underline">REVIEWS</div>
+
+            <div th:each="rev, stat : ${reviewDtos}">
+                <br>
+                <div class="text text-sec m-1 d-block w-100">
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex">
+                            <div th:text="${rev.user.username}" class="h5 fw-bold"></div>
+                            <div class="d-flex">
+                                <div th:text="${#strings.repeat('★', rev.rating)}" class="ps-3 text-warning"></div>
+                                <div th:text="${#strings.repeat('★', 5 - rev.rating)}" class="text-secondary"></div>
+                            </div>
+                        </div>
+                        <div th:text="${rev.createdAt}" class="fst-italic"></div>
+                    </div>
+                    <div th:text="${rev.comment}"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
