@@ -93,6 +93,24 @@
         <div class="text d-block w-100">
             <div class = "text h3 fw-bold text-decoration-underline">REVIEWS</div>
 
+            <form class="text d-block w-100 text-sec mb-4" th:action="@{'/reviews/new'}" method="post">
+                <input type="hidden" name="game.id" th:value="${gameDto.id}"/>
+                <input type="hidden" name="user.id" value="1"/>
+
+                <div class="mb-2">
+                    <select class="form-select" id="rating" name="rating" required>
+                        <option value="" disabled selected>Select rating</option>
+                        <option th:each="i : ${#numbers.sequence(1,5)}" th:value="${i}" th:text="${i}"></option>
+                    </select>
+                </div>
+
+                <div class="mb-2">
+                    <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="Write a review..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+
             <div th:each="rev, stat : ${reviewDtos}">
                 <br>
                 <div class="text text-sec m-1 d-block w-100">
