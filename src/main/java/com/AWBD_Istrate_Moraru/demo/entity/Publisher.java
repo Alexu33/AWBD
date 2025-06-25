@@ -1,9 +1,13 @@
 package com.AWBD_Istrate_Moraru.demo.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "publishers")
+@Getter
+@Setter
 public class Publisher {
 
     @Id
