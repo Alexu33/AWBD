@@ -313,3 +313,23 @@ a:visited {
         display: none;
     }
 }
+
+.page-link.my-page-link {
+    background-color: rgba(0, 50, 125, 0.8);
+    color: white;
+    font-weight: bold;
+    margin: 4px;
+}
+.page-link.my-page-link.disabled {
+    background-color: rgba(0, 30, 60, 0.8);
+    color: gray;
+    border: 1px gray solid !important;
+}
+.page-link.my-page-link:not(disabled):hover {
+    background-color: rgba(100, 200, 255, 0.8);
+    color: white;
+}
+.active > .page-link.my-page-link {
+    background-color: rgba(0, 150, 255, 0.8) !important;
+    border: 1px white solid !important;
+}
