@@ -9,20 +9,22 @@
 <div class="container mt-4">
     <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-    <!-- Add Friend Request Form -->
+
+    <!-- Friend request form -->
     <form th:action="@{/friendships/request-by-username}" method="post" class="mb-3">
         <div class="input-group">
-            <input type="text" name="username" placeholder="Enter username to send friend request" class="form-control">
+            <input type="text" name="username" placeholder="Enter username" class="form-control">
             <button class="btn btn-primary" type="submit">Send Request</button>
         </div>
     </form>
 
-    <!-- Button to show incoming requests -->
+    <!-- Buttons for requests and blocked users -->
     <div class="mb-3">
         <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#incomingRequests">Show Incoming Friend Requests</button>
+        <button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#blockedUsers">Show Blocked Users</button>
     </div>
 
-    <!-- Incoming Requests Section -->
+    <!-- Incoming Requests -->
     <div id="incomingRequests" class="collapse mb-4">
         <h4>Incoming Requests</h4>
         <ul class="list-group">
@@ -35,7 +37,7 @@
                     <form th:action="@{'/friendships/decline/' + ${req.id}}" method="post" class="d-inline">
                         <button class="btn btn-danger btn-sm">Reject</button>
                     </form>
-                    <form th:action="@{'/friendships/block/' + ${req.sender.id}}" method="post" class="d-inline">
+                    <form th:action="@{'/friendships/block-request/' + ${req.id}}" method="post" class="d-inline">
                         <button class="btn btn-warning btn-sm">Block</button>
                     </form>
                 </div>
@@ -43,32 +45,147 @@
         </ul>
     </div>
 
+    <!-- Blocked Users -->
+    <div id="blockedUsers" class="collapse mb-4">
+        <h4>Blocked Users</h4>
+        <ul class="list-group">
+            <li th:each="b : ${blockedUsers}" class="list-group-item d-flex justify-content-between align-items-center">
+                <span th:text="${b.receiver.username}">username</span>
+                <form th:action="@{'/friendships/remove/' + ${b.receiver.id}}" method="post" class="d-inline">
+                    <button class="btn btn-sm btn-danger">Unblock</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
     <!-- Friends and Chat Section -->
     <div class="row">
-        <!-- Friends list -->
+        <!-- Friends List -->
         <div class="col-md-4 border-end">
             <h3>Friends</h3>
             <ul class="list-group">
                 <li th:each="f : ${friendships}" class="list-group-item">
                     <span th:text="${f.sender.username == #authentication.name ? f.receiver.username : f.sender.username}"></span>
+                    <span th:attr="id='unread-' + ${(f.sender.username == #authentication.name) ? f.receiver.id : f.sender.id}" class="badge bg-danger ms-2" style="display:none;">1</span>
                     <form th:action="@{'/friendships/remove/' + ${(f.sender.username == #authentication.name) ? f.receiver.id : f.sender.id}}" method="post" class="d-inline">
                         <button class="btn btn-sm btn-danger">Remove</button>
                     </form>
                     <form th:action="@{'/friendships/block/' + ${(f.sender.username == #authentication.name) ? f.receiver.id : f.sender.id}}" method="post" class="d-inline">
                         <button class="btn btn-sm btn-warning">Block</button>
                     </form>
+                    <button type="button" class="btn btn-sm btn-info"
+                            th:attr="data-user-id=${(f.sender.username == #authentication.name) ? f.receiver.id : f.sender.id}"
+                            onclick="openChat(this)">Chat</button>
                 </li>
             </ul>
         </div>
 
-        <!-- Chat area -->
+        <!-- Chat Area -->
         <div class="col-md-8">
             <h3>Chat</h3>
-            <p>Chat UI goes here...</p>
+            <div id="chatBox">
+                <p>Select a friend to chat with.</p>
+            </div>
         </div>
     </div>
 </div>
 
 <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<script>
+    let stompClient = null;
+    let currentChatUserId = null;
+    const unreadMap = {};
+
+    function connectWebSocket() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function () {
+            stompClient.subscribe('/user/queue/messages', function (message) {
+                const msg = JSON.parse(message.body);
+                const senderId = msg.sender.id;
+                const receiverId = msg.receiver.id;
+
+                if (receiverId === currentChatUserId || senderId === currentChatUserId) {
+                    const messagesDiv = document.getElementById("chatMessages");
+                    if (messagesDiv) {
+                        const div = document.createElement("div");
+                        div.innerHTML = `<strong>${msg.sender.username}:</strong> ${msg.content}<small class="text-muted">(${new Date(msg.sentAt).toLocaleTimeString()})</small>`;
+                        messagesDiv.appendChild(div);
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    }
+                } else {
+                    updateUnreadUI(senderId);
+                }
+            });
+        });
+    }
+
+    function updateUnreadUI(senderId) {
+        const badge = document.getElementById(`unread-${senderId}`);
+        if (badge) {
+            unreadMap[senderId] = (unreadMap[senderId] || 0) + 1;
+            badge.textContent = unreadMap[senderId];
+            badge.style.display = "inline";
+        }
+    }
+
+    function openChat(button) {
+        const userId = parseInt(button.getAttribute("data-user-id"));
+        currentChatUserId = userId;
+        unreadMap[userId] = 0;
+        const badge = document.getElementById(`unread-${userId}`);
+        if (badge) {
+            badge.style.display = "none";
+        }
+
+        fetch(`/chat/history/${userId}`)
+            .then(res => res.json())
+            .then(data => {
+                let chatBox = document.getElementById("chatBox");
+                let chatHtml = '<div id="chatMessages" class="border p-2 mb-2" style="height: 300px; overflow-y: scroll;">';
+                for (let msg of data) {
+                    chatHtml += `
+                        <div>
+                            <strong>${msg.sender.username}:</strong> ${msg.content}
+                            <small class="text-muted">(${new Date(msg.sentAt).toLocaleTimeString()})</small>
+                        </div>
+                    `;
+                }
+                chatHtml += '</div>';
+
+                chatHtml += `
+                    <form onsubmit="sendMessage(event, ${userId})">
+                        <div class="input-group">
+                            <input type="text" id="messageInput" class="form-control" placeholder="Type a message..." required>
+                            <button class="btn btn-primary" type="submit">Send</button>
+                        </div>
+                    </form>`;
+
+                chatBox.innerHTML = chatHtml;
+
+                const messagesDiv = document.getElementById("chatMessages");
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            });
+    }
+
+    function sendMessage(event, receiverId) {
+        event.preventDefault();
+        const input = document.getElementById("messageInput");
+        const message = input.value;
+
+        const payload = {
+            receiverId: receiverId,
+            content: message
+        };
+
+        stompClient.send("/app/chat", {}, JSON.stringify(payload));
+        input.value = "";
+    }
+
+    window.addEventListener("load", connectWebSocket);
+</script>
 </body>
 </html>
