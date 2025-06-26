@@ -10,6 +10,8 @@ public interface CartService {
 
     CartDto findById(Long id);
 
+    CartDto findByUserId(Long userId);
+
     List<CartDto> findAll();
 
     void deleteById(Long id);

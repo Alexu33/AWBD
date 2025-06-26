@@ -10,6 +10,8 @@ public interface PurchaseService {
 
     PurchaseDto findById(Long id);
 
+    List<PurchaseDto> findAllByUserId(Long userId);
+
     List<PurchaseDto> findAll();
 
     void deleteById(Long id);

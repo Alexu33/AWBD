@@ -39,6 +39,15 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
+    public List<PurchaseDto> findAllByUserId(Long userId) {
+        List<Purchase> purchases = purchaseRepository.findAllByReceiverId(userId);
+
+        return purchases.stream()
+                .map(d -> purchaseMapper.toPurchaseDto(d))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<PurchaseDto> findAll() {
         List<Purchase> purchases = purchaseRepository.findAll();
 
