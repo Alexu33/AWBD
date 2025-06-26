@@ -60,7 +60,7 @@ public class GameController {
     }
 
     @RequestMapping("/{id}")
-    public String gameShow(@PathVariable Long id, Model model) {
+    public String gameShow(@PathVariable Long id, Model model, Principal principal) {
         GameDto gameDto = gameService.findById(id);
         model.addAttribute("gameDto", gameDto);
 
@@ -70,6 +70,14 @@ public class GameController {
         List<ReviewDto> reviewDtos = reviewService.findAllByGameId(id);
         model.addAttribute("reviewDtos", reviewDtos);
 
+        // Get latest 5 friends chats
+        if (principal != null) {
+            List<FriendshipDto> recentFriends = friendshipService
+                    .getAllAcceptedFriendships(principal.getName())
+                    .stream().limit(5).sorted().toList(); // or .sorted() based on recent messages
+            model.addAttribute("recentFriends", recentFriends);
+        }
+        
         return "gameShow";
     }
 

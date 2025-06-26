@@ -1,28 +1,53 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Register - Steme</title>
-    <link rel="stylesheet" href="/main-style.css">
+    <meta charset = "UTF-8">
+    <meta name = "viewport" content = "width=device-width, initial-scale = 1.0">
+    <meta http-equiv = "X-UA-Compatible" content = "ie=edge">
+
+    <link href="https://fonts.googleapis.com/css?family=Russo+One" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Cabin" rel="stylesheet">
+
+    <link rel = "stylesheet" href = "/main-style.css">
+
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/webjars/font-awesome/6.5.2/css/all.min.css"/>
+
+    <title> Login - Steme&trade; </title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
 <body>
-<div class="grid-div">
-    <h1 class="text site-title" id="logo">
-        <img id="logo-img" src="/logo.png" alt="Steme Logo">Steme
-    </h1>
 
-    <div class="container textbox">
-        <h2 class="text text-friends">Register</h2>
-        <form th:action="@{/register}" th:object="${user}" method="post" class="text">
-            <div><input class="form-control" type="text" th:field="*{username}" placeholder="Username"/></div>
-            <div><input class="form-control" type="email" th:field="*{email}" placeholder="Email"/></div>
-            <div><input class="form-control" type="password" th:field="*{password}" placeholder="Password"/></div>
-            <div><button class="blue-button" type="submit">Register</button></div>
-        </form>
-        <div class="container textbox">
-            <a href="/login" class = "blue-button" id = "login-button">Login</a>
+    <div class="grid-div d-flex justify-content-center">
+        <h1 class="text site-title" id="logo">
+            <img id="logo-img" src="/logo.png" alt="Steme Logo">Steme
+        </h1>
+    </div>
+
+    <div class="grid-div d-flex flex-column align-items-center mt-3">
+        <div class="text flex-column mt-5">
+            <form th:action="@{/register}" th:object="${user}" method="post">
+                <h2 class="text text-sec w-100 p-2">Register</h2>
+                <br>
+                <div><input class="form-control" type="text" th:field="*{username}" placeholder="Username"/></div>
+                <div><input class="form-control mt-2" type="email" th:field="*{email}" placeholder="Email"/></div>
+                <div><input class="form-control mt-2" type="password" th:field="*{password}" placeholder="Password"/></div>
+                <br>
+                <div class="container textbox">
+                    <button class="blue-button" type="submit">Register</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="text flex-column mt-5">
+            <div class="text fst-italic">Already have an account?</div>
+            <div class="container textbox mt-2">
+                <a href="/login" class="blue-button d-block w-100 text-center" id = "login-button">Login</a>
+            </div>
         </div>
     </div>
-</div>
+
 </body>
 </html>

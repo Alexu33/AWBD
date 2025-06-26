@@ -32,6 +32,7 @@ public class SecurityConfig {
                                 "/register",
                                 "/login",
                                 "/games",
+                                "/webjars/**",
                                 "/*.css", "/*.js", "/*.jpg", "/*.png", "/*.ico").permitAll()
                         .requestMatchers("/friendships/**").authenticated()
                         .anyRequest().authenticated())

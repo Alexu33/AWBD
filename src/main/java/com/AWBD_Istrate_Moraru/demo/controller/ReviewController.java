@@ -1,6 +1,7 @@
 package com.AWBD_Istrate_Moraru.demo.controller;
 
 import com.AWBD_Istrate_Moraru.demo.dto.ReviewDto;
+import com.AWBD_Istrate_Moraru.demo.dto.UserDto;
 import com.AWBD_Istrate_Moraru.demo.service.ReviewService;
 import com.AWBD_Istrate_Moraru.demo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -26,29 +29,17 @@ public class ReviewController {
         this.userService = userService;
     }
 
-    @PostMapping("")
-    public String createOrUpdateReview(@ModelAttribute ReviewDto reviewDto) {
-        reviewService.save(reviewDto);
-
-        return "redirect:/reviews";
-    }
     @PostMapping("/new")
-    public String createReview(@ModelAttribute ReviewDto reviewDto) {
+    public String createReview(@ModelAttribute ReviewDto reviewDto, Principal principal) {
         reviewDto.setCreatedAt(LocalDate.now());
-        //  TODO
-        reviewDto.setUser(userService.findById(1L));
+
+        Optional<UserDto> me = userService.findByUsername(principal.getName());
+        if (!me.isEmpty())
+            reviewDto.setUser(me.get());
 
         reviewService.save(reviewDto);
 
         return "redirect:/games/" + reviewDto.getGame().getId();
-    }
-
-    @RequestMapping("")
-    public String reviewList(Model model) {
-        List<ReviewDto> reviewDtos = reviewService.findAll();
-        log.info("Review List: {}", reviewDtos.size());
-        model.addAttribute("reviewDtos", reviewDtos);
-        return "reviewList";
     }
 
     @RequestMapping("/edit/{id}")

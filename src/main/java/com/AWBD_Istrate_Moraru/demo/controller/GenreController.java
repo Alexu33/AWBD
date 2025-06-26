@@ -1,7 +1,9 @@
 package com.AWBD_Istrate_Moraru.demo.controller;
 
+import com.AWBD_Istrate_Moraru.demo.dto.FriendshipDto;
 import com.AWBD_Istrate_Moraru.demo.dto.GameDto;
 import com.AWBD_Istrate_Moraru.demo.dto.GenreDto;
+import com.AWBD_Istrate_Moraru.demo.service.FriendshipService;
 import com.AWBD_Istrate_Moraru.demo.service.GameService;
 import com.AWBD_Istrate_Moraru.demo.service.GenreService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
 import java.util.List;
 
 @Slf4j
@@ -20,10 +23,12 @@ import java.util.List;
 public class GenreController {
     private GenreService genreService;
     private GameService gameService;
+    private FriendshipService friendshipService;
 
-    public GenreController(GenreService genreService, GameService gameService) {
+    public GenreController(GenreService genreService, GameService gameService, FriendshipService friendshipService) {
         this.genreService = genreService;
         this.gameService = gameService;
+        this.friendshipService = friendshipService;
     }
 
     @PostMapping("")
@@ -42,7 +47,7 @@ public class GenreController {
     }
 
     @RequestMapping("/{id}")
-    public String genreShow(@PathVariable Long id, Model model) {
+    public String genreShow(@PathVariable Long id, Model model, Principal principal) {
 
         List<GenreDto> genreDtos = genreService.findAll();
         model.addAttribute("genreDtos", genreDtos);
@@ -53,6 +58,14 @@ public class GenreController {
         List<GameDto> gameDtos = gameService.findAllByGenreId(genreDto.getId());
         log.info("Game List: {}", gameDtos.size());
         model.addAttribute("gameDtos", gameDtos);
+
+        // Get latest 5 friends chats
+        if (principal != null) {
+            List<FriendshipDto> recentFriends = friendshipService
+                    .getAllAcceptedFriendships(principal.getName())
+                    .stream().limit(5).sorted().toList(); // or .sorted() based on recent messages
+            model.addAttribute("recentFriends", recentFriends);
+        }
 
         return "genreShow";
     }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset = "UTF-8">
     <meta name = "viewport" content = "width=device-width, initial-scale = 1.0">
@@ -40,12 +40,44 @@
         Steme
     </h1>
 
-    <div class = "friends-list-div">
-        <h2 class = "text text-friends">Friends</h2>
 
-        <div class = "text" id = "friends-panel">
-            Register to add and chat with friends.<br><br>
-            <button class = "blue-button" id = "register-button">Register</button>
+    <div class = "friends-list-div">
+        <div sec:authorize="isAnonymous()">
+            <h2 class = "text text-friends">
+                <a href="/friendships" class="text-decoration-none text-light">Friends</a>
+            </h2>
+            <div class = "text" id = "friends-panel">
+                Register or login to add and chat with friends.<br><br>
+                <a href="/register" class = "blue-button p-2" id = "register-button">Register</a>
+                <a href="/login" class = "blue-button p-2 mt-2" id = "login-button">Login</a>
+            </div>
+        </div>
+
+        <div sec:authorize="isAuthenticated()">
+            <div class="text text-sec d-flex flex-column mb-4 w-100">
+                <div>
+                    Welcome,
+                    <span sec:authentication="name" class="fw-bold"></span>
+                    !
+                </div>
+                <form th:action="@{/logout}" method="post" class="mt-2">
+                    <button type="submit" class="blue-button">Logout</button>
+                </form>
+            </div>
+            <h2 class="text text-friends">
+                <a href="/friendships">Friends</a>
+            </h2>
+            <div class="text text-sec d-block w-100">
+                <h5>Latest chats</h5>
+                <ul style="list-style-type: none;" class="p-0 mb-0">
+                    <li th:each="f : ${recentFriends}" class="mt-3">
+                        <a th:href="@{'/users/' + ${f.sender.username == #authentication.name ? f.receiver.id : f.sender.id}}"
+                           th:text="${f.sender.username == #authentication.name ? f.receiver.username : f.sender.username}"
+                           class="blue-button p-2 w-100 d-block">
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
