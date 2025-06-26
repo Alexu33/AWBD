@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Friends</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css"/>
+</head>
+<body>
+<div class="container mt-4">
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <!-- Add Friend Request Form -->
+    <form th:action="@{/friendships/request-by-username}" method="post" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="username" placeholder="Enter username to send friend request" class="form-control">
+            <button class="btn btn-primary" type="submit">Send Request</button>
+        </div>
+    </form>
+
+    <!-- Button to show incoming requests -->
+    <div class="mb-3">
+        <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#incomingRequests">Show Incoming Friend Requests</button>
+    </div>
+
+    <!-- Incoming Requests Section -->
+    <div id="incomingRequests" class="collapse mb-4">
+        <h4>Incoming Requests</h4>
+        <ul class="list-group">
+            <li th:each="req : ${pendingRequests}" class="list-group-item d-flex justify-content-between align-items-center">
+                <span th:text="${req.sender.username}">username</span>
+                <div>
+                    <form th:action="@{'/friendships/accept/' + ${req.id}}" method="post" class="d-inline">
+                        <button class="btn btn-success btn-sm">Accept</button>
+                    </form>
+                    <form th:action="@{'/friendships/decline/' + ${req.id}}" method="post" class="d-inline">
+                        <button class="btn btn-danger btn-sm">Reject</button>
+                    </form>
+                    <form th:action="@{'/friendships/block/' + ${req.sender.id}}" method="post" class="d-inline">
+                        <button class="btn btn-warning btn-sm">Block</button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Friends and Chat Section -->
+    <div class="row">
+        <!-- Friends list -->
+        <div class="col-md-4 border-end">
+            <h3>Friends</h3>
+            <ul class="list-group">
+                <li th:each="f : ${friendships}" class="list-group-item">
+                    <span th:text="${f.sender.username == #authentication.name ? f.receiver.username : f.sender.username}"></span>
+                    <form th:action="@{'/friendships/remove/' + ${(f.sender.username == #authentication.name) ? f.receiver.id : f.sender.id}}" method="post" class="d-inline">
+                        <button class="btn btn-sm btn-danger">Remove</button>
+                    </form>
+                    <form th:action="@{'/friendships/block/' + ${(f.sender.username == #authentication.name) ? f.receiver.id : f.sender.id}}" method="post" class="d-inline">
+                        <button class="btn btn-sm btn-warning">Block</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Chat area -->
+        <div class="col-md-8">
+            <h3>Chat</h3>
+            <p>Chat UI goes here...</p>
+        </div>
+    </div>
+</div>
+
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

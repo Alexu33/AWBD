@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register - Steme</title>
+    <link rel="stylesheet" href="/main-style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body>
+<div class="grid-div">
+    <h1 class="text site-title" id="logo">
+        <img id="logo-img" src="/logo.png" alt="Steme Logo">Steme
+    </h1>
+
+    <div class="container textbox">
+        <h2 class="text text-friends">Register</h2>
+        <form th:action="@{/register}" th:object="${user}" method="post" class="text">
+            <div><input class="form-control" type="text" th:field="*{username}" placeholder="Username"/></div>
+            <div><input class="form-control" type="email" th:field="*{email}" placeholder="Email"/></div>
+            <div><input class="form-control" type="password" th:field="*{password}" placeholder="Password"/></div>
+            <div><button class="blue-button" type="submit">Register</button></div>
+        </form>
+        <div class="container textbox">
+            <a href="/login" class = "blue-button" id = "login-button">Login</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

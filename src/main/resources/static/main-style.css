@@ -240,6 +240,11 @@ a:visited {
     margin-top: 0px;
 }
 
+.text-friends a:hover {
+    color: #00f;
+}
+
+
 #friends-panel
 {
     display: flex;

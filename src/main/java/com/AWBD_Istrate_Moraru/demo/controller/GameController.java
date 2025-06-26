@@ -1,14 +1,8 @@
 package com.AWBD_Istrate_Moraru.demo.controller;
 
-import com.AWBD_Istrate_Moraru.demo.dto.GameDto;
-import com.AWBD_Istrate_Moraru.demo.dto.GenreDto;
-import com.AWBD_Istrate_Moraru.demo.dto.PublisherDto;
-import com.AWBD_Istrate_Moraru.demo.dto.ReviewDto;
+import com.AWBD_Istrate_Moraru.demo.dto.*;
 import com.AWBD_Istrate_Moraru.demo.entity.Game;
-import com.AWBD_Istrate_Moraru.demo.service.GameService;
-import com.AWBD_Istrate_Moraru.demo.service.GenreService;
-import com.AWBD_Istrate_Moraru.demo.service.PublisherService;
-import com.AWBD_Istrate_Moraru.demo.service.ReviewService;
+import com.AWBD_Istrate_Moraru.demo.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,20 +21,23 @@ import java.util.stream.Collectors;
 public class GameController {
     private GameService gameService;
     private GenreService genreService;
+    private FriendshipService friendshipService;
     private PublisherService publisherService;
     private ReviewService reviewService;
 
-    public GameController(GameService gameService, GenreService genreService, PublisherService publisherService, ReviewService reviewService) {
+    public GameController(GameService gameService, GenreService genreService, PublisherService publisherService, ReviewService reviewService, FriendshipService friendshipService) {
         this.gameService = gameService;
         this.genreService = genreService;
         this.publisherService = publisherService;
         this.reviewService = reviewService;
+        this.friendshipService = friendshipService;
     }
 
     @RequestMapping({""})
     public String getMoviePage(Model model,
                                @RequestParam("page") Optional<Integer> page,
-                               @RequestParam("size") Optional<Integer> size) {
+                               @RequestParam("size") Optional<Integer> size,
+                               Principal principal) {
         int currentPage = page.orElse(1);
         int pageSize = size.orElse(5);
 
@@ -49,6 +47,14 @@ public class GameController {
 
         List<GenreDto> genreDtos = genreService.findAll();
         model.addAttribute("genreDtos", genreDtos);
+
+        // Get latest 5 friends chats
+        if (principal != null) {
+            List<FriendshipDto> recentFriends = friendshipService
+                    .getAllAcceptedFriendships(principal.getName())
+                    .stream().limit(5).sorted().toList(); // or .sorted() based on recent messages
+            model.addAttribute("recentFriends", recentFriends);
+        }
 
         return "gameList";
     }

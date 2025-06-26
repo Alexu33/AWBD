@@ -8,7 +8,9 @@ import com.AWBD_Istrate_Moraru.demo.repository.FriendshipRepository;
 import com.AWBD_Istrate_Moraru.demo.repository.UserRepository;
 import com.AWBD_Istrate_Moraru.demo.utils.FriendshipStatus;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.rmi.server.LogStream.log;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FriendshipServiceImpl implements FriendshipService {
@@ -75,6 +80,7 @@ public class FriendshipServiceImpl implements FriendshipService {
     }
 
     @Override
+    @Transactional
     public void removeFriend(String requesterUsername, Long userId) {
         User requester = userRepository.findByUsername(requesterUsername)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -96,8 +102,49 @@ public class FriendshipServiceImpl implements FriendshipService {
     public List<FriendshipDto> getAllAcceptedFriendships(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        List<Friendship> friendships = friendshipRepository.findAllBySenderOrReceiverAndStatus(user,user,FriendshipStatus.ACCEPTED);
+        List<Friendship> friendships = friendshipRepository.findAllAcceptedFriendships(user, FriendshipStatus.ACCEPTED);
         return friendships.stream().map(friendshipMapper::toFriendshipDto).toList();
+    }
+
+    @Override
+    public void sendFriendRequestByUsername(String senderUsername, String receiverUsername) {
+        if(senderUsername.equals(receiverUsername)) {
+            throw new AccessDeniedException("You are not allowed to send yourself");
+        }
+
+        User sender = userRepository.findByUsername(senderUsername)
+                .orElseThrow(() -> new UsernameNotFoundException("Sender not found"));
+        User receiver = userRepository.findByUsername(receiverUsername)
+                .orElseThrow(() -> new EntityNotFoundException("Receiver not found"));
+
+        if (friendshipRepository.existsBySenderAndReceiver(sender, receiver)) {
+            throw new IllegalStateException("Friendship already exists or pending");
+        }
+
+        Friendship friendship = new Friendship();
+        friendship.setSender(sender);
+        friendship.setReceiver(receiver);
+        friendship.setStatus(FriendshipStatus.PENDING);
+        friendship.setRequestedAt(LocalDateTime.now());
+
+        friendshipRepository.save(friendship);
+    }
+
+    @Override
+    public List<FriendshipDto> getIncomingPendingRequests(String username) {
+        log("do i enter getIncomingPendingRequests");
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        log("Found " + friendshipRepository.findAllByReceiverAndStatus(user, FriendshipStatus.PENDING)
+                .stream()
+                .map(friendshipMapper::toFriendshipDto)
+                .toList().size() + " pending requests");
+
+        return friendshipRepository.findAllByReceiverAndStatus(user, FriendshipStatus.PENDING)
+                .stream()
+                .map(friendshipMapper::toFriendshipDto)
+                .toList();
     }
 
     private Friendship getAndValidateRequest(String receiverUsername, Long id, FriendshipStatus expectedStatus) {

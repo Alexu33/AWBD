@@ -51,4 +51,9 @@ public class UserServiceImpl implements UserService {
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
+
+    @Override
+    public Optional<UserDto> findByUsername(String username) {
+        return userRepository.findByUsername(username).map(userMapper::toUserDto);
+    }
 }

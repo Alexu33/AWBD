@@ -12,4 +12,7 @@ public interface FriendshipService {
     void removeFriend(String requesterUsername, Long userId);
     List<FriendshipDto> getAllFriendships(String username);
     List<FriendshipDto> getAllAcceptedFriendships(String username);
+
+    void sendFriendRequestByUsername(String senderUsername, String receiverUsername);
+    List<FriendshipDto> getIncomingPendingRequests(String name);
 }
