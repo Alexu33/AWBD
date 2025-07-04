@@ -52,6 +52,12 @@ public class FriendshipController {
         return "redirect:/friendships";
     }
 
+    @PostMapping("/block-request/{requestId}")
+    public String blockFriendRequest(@PathVariable Long requestId, Principal principal) {
+        friendshipService.blockFriendRequest(principal.getName(), requestId);
+        return "redirect:/friendships";
+    }
+
     @PostMapping("/block/{userId}")
     public String blockUser(@PathVariable Long userId, Principal principal) {
         friendshipService.blockUser(principal.getName(), userId);
@@ -68,8 +74,11 @@ public class FriendshipController {
     public String getAllFriendships(Model model, Principal principal) {
         List<FriendshipDto> friendships = friendshipService.getAllAcceptedFriendships(principal.getName());
         List<FriendshipDto> pendingRequests = friendshipService.getIncomingPendingRequests(principal.getName());
+        List<FriendshipDto> blocked = friendshipService.getAllBlockedFriendships(principal.getName());
+
         model.addAttribute("friendships", friendships);
         model.addAttribute("pendingRequests", pendingRequests);
+        model.addAttribute("blockedUsers", blocked);
         return "friendsList";
     }
 }

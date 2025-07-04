@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
@@ -23,5 +24,10 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     @Query("DELETE FROM Friendship f WHERE (f.sender = :user1 AND f.receiver = :user2) OR (f.sender = :user2 AND f.receiver = :user1)")
     void deleteByUsers(@Param("user1") User user1, @Param("user2") User user2);
 
+    @Query("SELECT f FROM Friendship f WHERE (f.sender = :user1 AND f.receiver = :user2) OR (f.sender = :user2 AND f.receiver = :user1)")
+    Optional<Friendship> findByUsers(@Param("user1") User user1, @Param("user2") User user2);
     List<Friendship> findAllByReceiverAndStatus(User user, FriendshipStatus friendshipStatus);
+    List<Friendship> findAllBySender(User sender);
+
+    Friendship findAllBySenderAndReceiver(User sender, User receiver);
 }
