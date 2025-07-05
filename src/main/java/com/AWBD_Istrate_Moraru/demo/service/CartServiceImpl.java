@@ -54,8 +54,8 @@ public class CartServiceImpl implements CartService {
         List<Cart> carts = cartRepository.findAll();
 
         return carts.stream()
-                    .map(d -> cartMapper.toCartDto(d))
-                    .collect(Collectors.toList());
+                .map(d -> cartMapper.toCartDto(d))
+                .collect(Collectors.toList());
     }
 
     @Override

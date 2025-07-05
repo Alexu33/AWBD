@@ -36,7 +36,7 @@ public class UserController {
     public String createOrUpdateUser(@ModelAttribute UserDto userDto) {
         userService.save(userDto);
 
-        return "redirect:/users";
+        return "redirect:/users/profile";
     }
 
     @RequestMapping("")
@@ -61,14 +61,6 @@ public class UserController {
                                                 .collect(Collectors.toList());
         model.addAttribute("gameDtos", gameDtos);
 
-        // Get latest 5 friends chats
-        if (principal != null) {
-            List<FriendshipDto> recentFriends = friendshipService
-                    .getAllAcceptedFriendships(principal.getName())
-                    .stream().limit(5).sorted().toList(); // or .sorted() based on recent messages
-            model.addAttribute("recentFriends", recentFriends);
-        }
-
         return "userShow";
     }
 
@@ -88,4 +80,19 @@ public class UserController {
         userService.deleteById(id);
         return "redirect:/users";
     }
+
+    @RequestMapping("/profile")
+    public String profile(Model model, Principal principal) {
+        if (principal != null) {
+            UserDto userDto = userService.findByUsername(principal.getName()).orElseThrow(() -> new RuntimeException("User not found"));
+            model.addAttribute("userDto", userDto);
+
+            List<GenreDto> genreDtos = genreService.findAll();
+            model.addAttribute("genreDtos", genreDtos);
+
+            return "profile"; // Thymeleaf template name
+        }
+        return "redirect:/login";
+    }
+
 }
