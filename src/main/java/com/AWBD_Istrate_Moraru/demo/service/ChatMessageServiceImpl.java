@@ -11,12 +11,15 @@ import com.AWBD_Istrate_Moraru.demo.repository.UserRepository;
 import com.AWBD_Istrate_Moraru.demo.utils.FriendshipStatus;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor()
@@ -60,6 +63,17 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 .findBySenderAndReceiverOrSenderAndReceiver(user, other, other, user);
 
         return messages.stream().map(chatMessageMapper::toDto).toList();
+    }
+
+    @Override
+    public Optional<ChatMessageDto> getLastMessageBetween(String username, Long friendId) {
+        List<ChatMessageDto> result = getChatBetweenUsers(username, friendId);
+
+        if (result.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(result.get(0));
     }
 
 }

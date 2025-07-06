@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Purchase History</title>
+  <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css"/>
+</head>
+<body class="container mt-4">
+
+<h2>Your Purchase History</h2>
+
+<table class="table table-bordered table-striped mt-3">
+  <thead class="table-dark">
+  <tr>
+    <th>#</th>
+    <th>Game</th>
+    <th>Gifted By</th>
+    <th>Price Paid</th>
+    <th>Purchase Date</th>
+    <th>Comment</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="p, stat : ${purchaseDtos}">
+    <td th:text="${stat.count}">1</td>
+    <td th:text="${p.game.title}">Game Title</td>
+    <td th:text="${p.sender.username}">Sender</td>
+    <td th:text="${p.pricePaid} + '$'">10.00$</td>
+    <td th:text="${p.purchaseDate}">2025-07-05</td>
+    <td th:text="${p.comment} ?: '-'">-</td>
+  </tr>
+  </tbody>
+</table>
+
+<a href="/games" class="btn btn-secondary mt-3">Back to Games</a>
+
+</body>
+</html>

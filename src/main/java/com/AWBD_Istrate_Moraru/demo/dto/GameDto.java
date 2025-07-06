@@ -25,6 +25,5 @@ public class GameDto {
     private DeveloperDto developer;
     private List<Long> genreIds;
     private List<GenreDto> genres;
-    private List<CartDto> carts;
     private Double averageRating;
 }

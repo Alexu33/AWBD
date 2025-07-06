@@ -1,9 +1,10 @@
 package com.AWBD_Istrate_Moraru.demo.controller;
 
+import com.AWBD_Istrate_Moraru.demo.dto.FriendshipDto;
 import com.AWBD_Istrate_Moraru.demo.dto.GameDto;
 import com.AWBD_Istrate_Moraru.demo.dto.GenreDto;
-import com.AWBD_Istrate_Moraru.demo.service.GameService;
-import com.AWBD_Istrate_Moraru.demo.service.GenreService;
+import com.AWBD_Istrate_Moraru.demo.service.*;
+import com.AWBD_Istrate_Moraru.demo.utils.ControllerReusable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
 import java.util.List;
 
 @Slf4j
@@ -20,10 +22,20 @@ import java.util.List;
 public class GenreController {
     private GenreService genreService;
     private GameService gameService;
+    private FriendshipService friendshipService;
+    private UserService userService;
+    private ChatMessageService chatMessageService;
 
-    public GenreController(GenreService genreService, GameService gameService) {
+    private ControllerReusable controllerReusable;
+
+    public GenreController(GenreService genreService, GameService gameService, FriendshipService friendshipService, UserService userService, ChatMessageService chatMessageService) {
         this.genreService = genreService;
         this.gameService = gameService;
+        this.friendshipService = friendshipService;
+        this.userService = userService;
+        this.chatMessageService = chatMessageService;
+
+        this.controllerReusable = new ControllerReusable(userService, friendshipService, chatMessageService);
     }
 
     @PostMapping("")
@@ -42,7 +54,7 @@ public class GenreController {
     }
 
     @RequestMapping("/{id}")
-    public String genreShow(@PathVariable Long id, Model model) {
+    public String genreShow(@PathVariable Long id, Model model, Principal principal) {
 
         List<GenreDto> genreDtos = genreService.findAll();
         model.addAttribute("genreDtos", genreDtos);
@@ -53,6 +65,8 @@ public class GenreController {
         List<GameDto> gameDtos = gameService.findAllByGenreId(genreDto.getId());
         log.info("Game List: {}", gameDtos.size());
         model.addAttribute("gameDtos", gameDtos);
+
+        controllerReusable.addFriendsAttributes(model, principal);
 
         return "genreShow";
     }

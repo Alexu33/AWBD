@@ -3,14 +3,17 @@ package com.AWBD_Istrate_Moraru.demo.controller;
 import com.AWBD_Istrate_Moraru.demo.dto.*;
 import com.AWBD_Istrate_Moraru.demo.entity.Game;
 import com.AWBD_Istrate_Moraru.demo.service.*;
+import com.AWBD_Istrate_Moraru.demo.utils.ControllerReusable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,17 +27,27 @@ public class GameController {
     private FriendshipService friendshipService;
     private PublisherService publisherService;
     private ReviewService reviewService;
+    private ChatMessageService chatMessageService;
+    private PurchaseService purchaseService;
+    private UserService userService;
 
-    public GameController(GameService gameService, GenreService genreService, PublisherService publisherService, ReviewService reviewService, FriendshipService friendshipService) {
+    private ControllerReusable controllerReusable;
+
+    public GameController(GameService gameService, GenreService genreService, PublisherService publisherService, ReviewService reviewService, FriendshipService friendshipService, ChatMessageService chatMessageService, PurchaseService purchaseService, UserService userService) {
         this.gameService = gameService;
         this.genreService = genreService;
         this.publisherService = publisherService;
         this.reviewService = reviewService;
         this.friendshipService = friendshipService;
+        this.chatMessageService = chatMessageService;
+        this.purchaseService = purchaseService;
+        this.userService = userService;
+
+        this.controllerReusable = new ControllerReusable(userService, friendshipService, chatMessageService);
     }
 
     @RequestMapping({""})
-    public String getMoviePage(Model model,
+    public String getGamePage(Model model,
                                @RequestParam("page") Optional<Integer> page,
                                @RequestParam("size") Optional<Integer> size,
                                Principal principal) {
@@ -48,19 +61,13 @@ public class GameController {
         List<GenreDto> genreDtos = genreService.findAll();
         model.addAttribute("genreDtos", genreDtos);
 
-        // Get latest 5 friends chats
-        if (principal != null) {
-            List<FriendshipDto> recentFriends = friendshipService
-                    .getAllAcceptedFriendships(principal.getName())
-                    .stream().limit(5).sorted().toList(); // or .sorted() based on recent messages
-            model.addAttribute("recentFriends", recentFriends);
-        }
+        controllerReusable.addFriendsAttributes(model, principal);
 
         return "gameList";
     }
 
     @RequestMapping("/{id}")
-    public String gameShow(@PathVariable Long id, Model model) {
+    public String gameShow(@PathVariable Long id, Model model, Principal principal) {
         GameDto gameDto = gameService.findById(id);
         model.addAttribute("gameDto", gameDto);
 
@@ -70,6 +77,8 @@ public class GameController {
         List<ReviewDto> reviewDtos = reviewService.findAllByGameId(id);
         model.addAttribute("reviewDtos", reviewDtos);
 
+        controllerReusable.addFriendsAttributes(model, principal);
+        
         return "gameShow";
     }
 
