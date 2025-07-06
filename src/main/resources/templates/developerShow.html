@@ -40,6 +40,18 @@
         Steme
     </h1>
 
+
+    <div sec:authorize="isAuthenticated()" id="my-profile" class="d-flex text">
+        <a th:href="@{'/users/' + ${currentUserId}}" class="blue-button p-2 d-block align-content-center me-2">
+            <i class="fa-solid fa-user pe-1"></i>
+            <span sec:authentication="name" class="fw-bold"></span>
+        </a>
+        <a th:href="@{/users/profile}" class="game-crud-button btn btn-sm btn-primary align-self-center">
+            <i class="fa-solid fa-pen"></i>
+        </a>
+    </div>
+
+
     <div class = "friends-list-div">
         <div sec:authorize="isAnonymous()">
             <h2 class = "text text-friends">

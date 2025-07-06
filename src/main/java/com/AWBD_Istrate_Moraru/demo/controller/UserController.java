@@ -2,6 +2,7 @@ package com.AWBD_Istrate_Moraru.demo.controller;
 
 import com.AWBD_Istrate_Moraru.demo.dto.*;
 import com.AWBD_Istrate_Moraru.demo.service.*;
+import com.AWBD_Istrate_Moraru.demo.utils.ControllerReusable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,13 +24,19 @@ public class UserController {
     private GenreService genreService;
     private FriendshipService friendshipService;
     private PurchaseService purchaseService;
+    private ChatMessageService chatMessageService;
 
-    public UserController(UserService userService, GameService gameService, GenreService genreService, FriendshipService friendshipService, PurchaseService purchaseService) {
+    private ControllerReusable controllerReusable;
+
+    public UserController(UserService userService, GameService gameService, GenreService genreService, FriendshipService friendshipService, PurchaseService purchaseService, ChatMessageService chatMessageService) {
         this.userService = userService;
         this.gameService = gameService;
         this.genreService = genreService;
         this.friendshipService = friendshipService;
         this.purchaseService = purchaseService;
+        this.chatMessageService = chatMessageService;
+
+        this.controllerReusable = new ControllerReusable(userService, friendshipService, chatMessageService);
     }
 
     @PostMapping("")
@@ -57,6 +64,8 @@ public class UserController {
 
         List<PurchaseDto> purchaseDtos = purchaseService.findAllByUserId(id);
         model.addAttribute("purchaseDtos", purchaseDtos);
+
+        controllerReusable.addFriendsAttributes(model, principal);
 
         return "userShow";
     }

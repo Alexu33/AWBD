@@ -2,6 +2,7 @@ package com.AWBD_Istrate_Moraru.demo.controller;
 
 import com.AWBD_Istrate_Moraru.demo.dto.*;
 import com.AWBD_Istrate_Moraru.demo.service.*;
+import com.AWBD_Istrate_Moraru.demo.utils.ControllerReusable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,12 +22,20 @@ public class DeveloperController {
     private GameService gameService;
     private GenreService genreService;
     private FriendshipService friendshipService;
+    private UserService userService;
+    private ChatMessageService chatMessageService;
 
-    public DeveloperController(DeveloperService developerService, GameService gameService, GenreService genreService, FriendshipService friendshipService) {
+    private ControllerReusable controllerReusable;
+
+    public DeveloperController(DeveloperService developerService, GameService gameService, GenreService genreService, FriendshipService friendshipService, UserService userService, ChatMessageService chatMessageService) {
         this.developerService = developerService;
         this.gameService = gameService;
         this.genreService = genreService;
         this.friendshipService = friendshipService;
+        this.userService = userService;
+        this.chatMessageService = chatMessageService;
+
+        this.controllerReusable = new ControllerReusable(userService, friendshipService, chatMessageService);
     }
 
     @PostMapping("")
@@ -57,13 +66,7 @@ public class DeveloperController {
         log.info("Game List: {}", gameDtos.size());
         model.addAttribute("gameDtos", gameDtos);
 
-        // Get latest 5 friends chats
-        if (principal != null) {
-            List<FriendshipDto> recentFriends = friendshipService
-                    .getAllAcceptedFriendships(principal.getName())
-                    .stream().limit(5).sorted().toList(); // or .sorted() based on recent messages
-            model.addAttribute("recentFriends", recentFriends);
-        }
+        controllerReusable.addFriendsAttributes(model, principal);
 
         return "developerShow";
     }

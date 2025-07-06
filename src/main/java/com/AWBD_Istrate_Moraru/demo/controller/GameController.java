@@ -3,6 +3,7 @@ package com.AWBD_Istrate_Moraru.demo.controller;
 import com.AWBD_Istrate_Moraru.demo.dto.*;
 import com.AWBD_Istrate_Moraru.demo.entity.Game;
 import com.AWBD_Istrate_Moraru.demo.service.*;
+import com.AWBD_Istrate_Moraru.demo.utils.ControllerReusable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +31,8 @@ public class GameController {
     private PurchaseService purchaseService;
     private UserService userService;
 
+    private ControllerReusable controllerReusable;
+
     public GameController(GameService gameService, GenreService genreService, PublisherService publisherService, ReviewService reviewService, FriendshipService friendshipService, ChatMessageService chatMessageService, PurchaseService purchaseService, UserService userService) {
         this.gameService = gameService;
         this.genreService = genreService;
@@ -39,6 +42,8 @@ public class GameController {
         this.chatMessageService = chatMessageService;
         this.purchaseService = purchaseService;
         this.userService = userService;
+
+        this.controllerReusable = new ControllerReusable(userService, friendshipService, chatMessageService);
     }
 
     @RequestMapping({""})
@@ -56,43 +61,7 @@ public class GameController {
         List<GenreDto> genreDtos = genreService.findAll();
         model.addAttribute("genreDtos", genreDtos);
 
-        // Latest friends by last chat message
-        if (principal != null) {
-            String currentUsername = principal.getName();
-            UserDto currentUser = userService.findByUsername(currentUsername).orElse(null);
-            model.addAttribute("currentUserId", currentUser.getId());
-            List<FriendshipDto> friendships = friendshipService.getAllAcceptedFriendships(currentUsername);
-
-            // For displaying in dropdown: collect friend usernames
-            List<UserDto> friends = friendships.stream()
-                    .map(f -> f.getSender().getUsername().equals(currentUsername)
-                            ? f.getReceiver()
-                            : f.getSender())
-                    .collect(Collectors.toList());
-            model.addAttribute("friends", friends);
-
-            // Pair each friend with their latest message timestamp
-            List<Pair<FriendshipDto, LocalDateTime>> sorted = friendships.stream()
-                    .map(friendship -> {
-                        Long friendId = friendship.getSender().getUsername().equals(currentUsername)
-                                ? friendship.getReceiver().getId()
-                                : friendship.getSender().getId();
-
-                        return Pair.of(friendship,
-                                chatMessageService.getLastMessageBetween(currentUsername, friendId)
-                                        .map(ChatMessageDto::getSentAt)
-                                        .orElse(LocalDateTime.MIN)); // fallback if no messages
-                    })
-                    .sorted((a, b) -> b.getSecond().compareTo(a.getSecond())) // sort descending
-                    .limit(5)
-                    .toList();
-
-            List<FriendshipDto> recentFriends = sorted.stream()
-                    .map(Pair::getFirst)
-                    .toList();
-
-            model.addAttribute("recentFriends", recentFriends);
-        }
+        controllerReusable.addFriendsAttributes(model, principal);
 
         return "gameList";
     }
@@ -108,44 +77,7 @@ public class GameController {
         List<ReviewDto> reviewDtos = reviewService.findAllByGameId(id);
         model.addAttribute("reviewDtos", reviewDtos);
 
-        // Latest friends by last chat message
-        if (principal != null) {
-            String currentUsername = principal.getName();
-            UserDto currentUser = userService.findByUsername(currentUsername).orElse(null);
-            model.addAttribute("currentUserId", currentUser.getId());
-            List<FriendshipDto> friendships = friendshipService.getAllAcceptedFriendships(currentUsername);
-
-            // For displaying in dropdown: collect friend usernames
-            List<UserDto> friends = friendships.stream()
-                    .map(f -> f.getSender().getUsername().equals(currentUsername)
-                            ? f.getReceiver()
-                            : f.getSender())
-                    .collect(Collectors.toList());
-            model.addAttribute("friends", friends);
-
-            // Pair each friend with their latest message timestamp
-            List<Pair<FriendshipDto, LocalDateTime>> sorted = friendships.stream()
-                    .map(friendship -> {
-                        Long friendId = friendship.getSender().getUsername().equals(currentUsername)
-                                ? friendship.getReceiver().getId()
-                                : friendship.getSender().getId();
-
-                        return Pair.of(friendship,
-                                chatMessageService.getLastMessageBetween(currentUsername, friendId)
-                                        .map(ChatMessageDto::getSentAt)
-                                        .orElse(LocalDateTime.MIN)); // fallback if no messages
-                    })
-                    .sorted((a, b) -> b.getSecond().compareTo(a.getSecond())) // sort descending
-                    .limit(5)
-                    .toList();
-
-            List<FriendshipDto> recentFriends = sorted.stream()
-                    .map(Pair::getFirst)
-                    .toList();
-
-            model.addAttribute("recentFriends", recentFriends);
-        }
-
+        controllerReusable.addFriendsAttributes(model, principal);
         
         return "gameShow";
     }
