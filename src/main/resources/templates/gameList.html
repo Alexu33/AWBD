@@ -41,6 +41,17 @@
     </h1>
 
 
+    <div sec:authorize="isAuthenticated()" id="my-profile" class="d-flex text">
+        <a th:href="@{'/users/' + ${currentUserId}}" class="blue-button p-2 d-block align-content-center me-2">
+            <i class="fa-solid fa-user pe-1"></i>
+            <span sec:authentication="name" class="fw-bold"></span>
+        </a>
+
+        <a th:href="@{/users/profile}" class="game-crud-button btn btn-sm btn-primary align-self-center">
+            <i class="fa-solid fa-pen"></i>
+        </a>
+    </div>
+
 
     <div class = "friends-list-div">
         <div sec:authorize="isAnonymous()">
@@ -65,10 +76,6 @@
                     <button type="submit" class="blue-button">Logout</button>
                 </form>
             </div>
-
-            <a th:href="@{/games/owned}" class="blue-button p-2 w-100 d-block mt-3">My Owned Games</a>
-            <a th:href="@{/purchases}" class="blue-button p-2 w-100 d-block mt-2">Purchase History</a>
-            <a th:href="@{/users/profile}" class="blue-button p-2 w-100 d-block mt-2">My Profile</a>
 
             <h2 class="text text-friends">
                 <a href="/friendships">Friends</a>
@@ -110,15 +117,6 @@
                     <a th:href="@{'/games/delete/' + ${game.id}}" class="game-crud-button btn btn-sm btn-danger">
                         <i class="fa-solid fa-trash"></i>
                     </a>
-                    <!-- Buy button -->
-                    <form th:action="@{/purchases/buy}" method="post">
-                        <input type="hidden" th:name="gameId" th:value="${game.id}" />
-                        <select name="receiverId" class="form-select mt-2">
-                            <option th:value="${currentUserId}" th:text="'Myself'"></option>
-                            <option th:each="f : ${friends}" th:value="${f.id}" th:text="${f.username}"></option>
-                        </select>
-                        <button type="submit" class="btn btn-success mt-2">Buy</button>
-                    </form>
                 </div>
             </div>
 

@@ -1,7 +1,7 @@
 package com.AWBD_Istrate_Moraru.demo.controller;
 
-import com.AWBD_Istrate_Moraru.demo.dto.DeveloperDto;
-import com.AWBD_Istrate_Moraru.demo.service.DeveloperService;
+import com.AWBD_Istrate_Moraru.demo.dto.*;
+import com.AWBD_Istrate_Moraru.demo.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
 import java.util.List;
 
 @Slf4j
@@ -17,9 +18,15 @@ import java.util.List;
 @RequestMapping("/developers")
 public class DeveloperController {
     private DeveloperService developerService;
+    private GameService gameService;
+    private GenreService genreService;
+    private FriendshipService friendshipService;
 
-    public DeveloperController(DeveloperService developerService) {
+    public DeveloperController(DeveloperService developerService, GameService gameService, GenreService genreService, FriendshipService friendshipService) {
         this.developerService = developerService;
+        this.gameService = gameService;
+        this.genreService = genreService;
+        this.friendshipService = friendshipService;
     }
 
     @PostMapping("")
@@ -36,6 +43,31 @@ public class DeveloperController {
         model.addAttribute("developerDtos", developerDtos);
         return "developerList";
     }
+
+    @RequestMapping("/{id}")
+    public String developerShow(@PathVariable Long id, Model model, Principal principal) {
+
+        List<GenreDto> genreDtos = genreService.findAll();
+        model.addAttribute("genreDtos", genreDtos);
+
+        DeveloperDto developerDto = developerService.findById(id);
+        model.addAttribute("developerDto", developerDto);
+
+        List<GameDto> gameDtos = gameService.findAllByDeveloperId(developerDto.getId());
+        log.info("Game List: {}", gameDtos.size());
+        model.addAttribute("gameDtos", gameDtos);
+
+        // Get latest 5 friends chats
+        if (principal != null) {
+            List<FriendshipDto> recentFriends = friendshipService
+                    .getAllAcceptedFriendships(principal.getName())
+                    .stream().limit(5).sorted().toList(); // or .sorted() based on recent messages
+            model.addAttribute("recentFriends", recentFriends);
+        }
+
+        return "developerShow";
+    }
+
 
     @RequestMapping("/edit/{id}")
     public String edit(@PathVariable Long id, Model model) {

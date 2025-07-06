@@ -89,7 +89,7 @@
                 <div sec:authorize="isAuthenticated()"
                      th:if="${userDto.username == #authentication.name}"
                      class="game-crud-buttons-div">
-                    <a th:href="@{'/users/edit/' + ${userDto.id}}" class="game-crud-button btn btn-sm btn-primary">
+                    <a th:href="@{/users/profile}" class="game-crud-button btn btn-sm btn-primary">
                         <i class="fa-solid fa-pen"></i>
                     </a>
                 </div>
@@ -98,11 +98,49 @@
 
         <br>
 
-        <div class="text d-block">
+        <div class="text d-block w-100">
             <h3 class="text text-sec mb-3">Purchased games</h3>
             <div class="d-flex justify-content-start w-100">
-                <a th:href="@{'/games/' + ${game.id}}" class="blue-button m-1 p-1 w-auto"
-                   th:each="game, stat : ${gameDtos}" th:text="${game.title}">Game</a>
+                <a th:href="@{'/games/' + ${purchase.game.id}}" class="blue-button m-1 p-1 w-auto"
+                   th:each="purchase, stat : ${purchaseDtos}" th:text="${purchase.game.title}">Game</a>
+            </div>
+
+
+            <div sec:authorize="isAuthenticated()"
+                 th:if="${userDto.username == #authentication.name}">
+
+                <details class="btn btn-primary m-1 mt-3">
+                    <summary class="text-start">Purchase history</summary>
+                    <table class="table table-hover table-striped mt-2">
+                        <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Game</th>
+                            <th>Gifted By</th>
+                            <th>Price Paid</th>
+                            <th>Purchase Date</th>
+                            <th>Comment</th>
+                            <th>Game Page</th>
+                        </tr>
+                        </thead>
+                        <tbody class="table-primary">
+                        <tr th:each="p, stat : ${purchaseDtos}">
+                            <td th:text="${stat.count}">1</td>
+                            <td th:text="${p.game.title}">Game Title</td>
+                            <td th:text="${p.sender.username}">Sender</td>
+                            <td th:text="${p.pricePaid} + '$'">10.00$</td>
+                            <td th:text="${p.purchaseDate}">2025-07-05</td>
+                            <td th:text="${p.comment} ?: '-'">-</td>
+                            <td class="align-content-center">
+                                <a th:href="@{'/games/' + ${p.game.id}}" class="game-crud-button btn btn-sm btn-primary"
+                                    style="color: white;">
+                                    <i class="fa-solid fa-up-right-from-square"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </details>
             </div>
         </div>
     </div>

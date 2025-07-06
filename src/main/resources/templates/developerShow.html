@@ -40,7 +40,6 @@
         Steme
     </h1>
 
-
     <div class = "friends-list-div">
         <div sec:authorize="isAnonymous()">
             <h2 class = "text text-friends">
@@ -84,10 +83,10 @@
 
     <div class="container textbox">
 
-        <div class="d-flex justify-content-center align-items-center" style="
+        <div class="d-flex justify-content-center align-items-center mb-4" style="
                 justify-self: center;
                 margin-top: -100px;">
-            <div class="text h2 fw-bold" th:text="${genreDto.name.toUpperCase() + ' GAMES'}"></div>
+            <div class="text h2 fw-bold" th:text="'Developed by ' + ${developerDto.name.toUpperCase()}"></div>
         </div>
 
         <div class="game-div" th:each="game, stat : ${gameDtos}">

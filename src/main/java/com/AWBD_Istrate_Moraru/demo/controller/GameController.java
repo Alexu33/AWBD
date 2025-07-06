@@ -42,7 +42,7 @@ public class GameController {
     }
 
     @RequestMapping({""})
-    public String getMoviePage(Model model,
+    public String getGamePage(Model model,
                                @RequestParam("page") Optional<Integer> page,
                                @RequestParam("size") Optional<Integer> size,
                                Principal principal) {
@@ -96,21 +96,6 @@ public class GameController {
 
         return "gameList";
     }
-
-    @GetMapping("/owned")
-    public String getOwnedGames(Model model, Principal principal) {
-        if (principal != null) {
-            String username = principal.getName();
-            List<GameDto> ownedGames = purchaseService.getOwnedGames(username);
-            model.addAttribute("ownedGames", ownedGames);
-        }
-
-        List<GenreDto> genreDtos = genreService.findAll();
-        model.addAttribute("genreDtos", genreDtos);
-
-        return "ownedGames";
-    }
-
 
     @RequestMapping("/{id}")
     public String gameShow(@PathVariable Long id, Model model, Principal principal) {

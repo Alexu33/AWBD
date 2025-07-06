@@ -81,12 +81,13 @@
     </div>
 
 
-    <div class="d-flex justify-content-center align-items-center">
-        <div class="text h2 fw-bold" th:text="${publisherDto.name.toUpperCase() + '`S GAMES'}"></div>
-    </div>
-    <br>
-
     <div class="container textbox">
+
+        <div class="d-flex justify-content-center align-items-center mb-4" style="
+                justify-self: center;
+                margin-top: -100px;">
+            <div class="text h2 fw-bold" th:text="${publisherDto.name.toUpperCase() + '`S GAMES'}"></div>
+        </div>
 
         <div class="game-div" th:each="game, stat : ${gameDtos}">
             <a th:href="@{'/games/' + ${game.id}}">

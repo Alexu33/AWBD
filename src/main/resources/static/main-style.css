@@ -9,6 +9,7 @@
     text-transform: uppercase;
     text-shadow: 4px 4px rgba(60, 50, 180, 0.8);
     box-sizing: border-box;
+    justify-self: start;
 }
 
 #logo-img {
@@ -16,6 +17,15 @@
     height: 60px;
     object-fit: cover;
     margin-right: 10px;
+}
+
+#my-profile {
+    height: fit-content;
+    align-self: end;
+    justify-self: end;
+}
+#my-profile a {
+    color: white;
 }
 
 body {
@@ -33,9 +43,9 @@ body {
     grid-template-columns: auto 60% 1fr;
     grid-template-rows: auto auto 80%;
     grid-template-areas:
-        "site-title    .        ."
-        "sidebar  textbox  friends-list-div"
-        "sidebar  textbox  friends-list-div";
+        "site-title site-title   my-profile"
+        "sidebar    textbox      friends-list-div"
+        "sidebar    textbox      friends-list-div";
 }
 
 .grid-div .text, .site-title {
@@ -183,6 +193,10 @@ body {
 .main-div {
     margin-top: 5px;
     font-size: 30px;
+}
+
+.container {
+    margin-top: 30px;
 }
 
 .genre-list-top {

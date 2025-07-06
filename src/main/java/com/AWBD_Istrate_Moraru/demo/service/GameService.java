@@ -18,6 +18,8 @@ public interface GameService {
 
     List<GameDto> findAllByPublisherId(Long publisherId);
 
+    List<GameDto> findAllByDeveloperId(Long developerId);
+
     void deleteById(Long id);
 
     Page<GameDto> findPaginated(Pageable pageable);

@@ -51,7 +51,7 @@ public class PublisherController {
     }
 
     @RequestMapping("/{id}")
-    public String genreShow(@PathVariable Long id, Model model, Principal principal) {
+    public String publisherShow(@PathVariable Long id, Model model, Principal principal) {
 
         List<GenreDto> genreDtos = genreService.findAll();
         model.addAttribute("genreDtos", genreDtos);

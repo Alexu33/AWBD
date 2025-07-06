@@ -83,18 +83,6 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
-    public List<GameDto> getOwnedGames(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        List<Purchase> purchases = purchaseRepository.findAllByReceiverId(user.getId());
-
-        return purchases.stream()
-                .map(p -> gameMapper.toDto(p.getGame()))
-                .distinct()
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public void simulatePurchase(String senderUsername, Long receiverId, Long gameId) {
         User sender = userRepository.findByUsername(senderUsername)
                 .orElseThrow(() -> new RuntimeException("Sender not found"));

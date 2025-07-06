@@ -55,11 +55,8 @@ public class UserController {
         List<GenreDto> genreDtos = genreService.findAll();
         model.addAttribute("genreDtos", genreDtos);
 
-        List<GameDto> gameDtos = purchaseService.findAllByUserId(id)
-                                                .stream()
-                                                .map(purchaseDto -> purchaseDto.getGame())
-                                                .collect(Collectors.toList());
-        model.addAttribute("gameDtos", gameDtos);
+        List<PurchaseDto> purchaseDtos = purchaseService.findAllByUserId(id);
+        model.addAttribute("purchaseDtos", purchaseDtos);
 
         return "userShow";
     }
