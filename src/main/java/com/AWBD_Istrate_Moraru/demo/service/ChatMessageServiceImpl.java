@@ -73,7 +73,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             return Optional.empty();
         }
 
-        return Optional.of(result.getFirst());
+        return Optional.of(result.get(0));
     }
 
 }

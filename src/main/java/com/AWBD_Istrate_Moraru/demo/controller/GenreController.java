@@ -3,9 +3,8 @@ package com.AWBD_Istrate_Moraru.demo.controller;
 import com.AWBD_Istrate_Moraru.demo.dto.FriendshipDto;
 import com.AWBD_Istrate_Moraru.demo.dto.GameDto;
 import com.AWBD_Istrate_Moraru.demo.dto.GenreDto;
-import com.AWBD_Istrate_Moraru.demo.service.FriendshipService;
-import com.AWBD_Istrate_Moraru.demo.service.GameService;
-import com.AWBD_Istrate_Moraru.demo.service.GenreService;
+import com.AWBD_Istrate_Moraru.demo.service.*;
+import com.AWBD_Istrate_Moraru.demo.utils.ControllerReusable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,11 +23,19 @@ public class GenreController {
     private GenreService genreService;
     private GameService gameService;
     private FriendshipService friendshipService;
+    private UserService userService;
+    private ChatMessageService chatMessageService;
 
-    public GenreController(GenreService genreService, GameService gameService, FriendshipService friendshipService) {
+    private ControllerReusable controllerReusable;
+
+    public GenreController(GenreService genreService, GameService gameService, FriendshipService friendshipService, UserService userService, ChatMessageService chatMessageService) {
         this.genreService = genreService;
         this.gameService = gameService;
         this.friendshipService = friendshipService;
+        this.userService = userService;
+        this.chatMessageService = chatMessageService;
+
+        this.controllerReusable = new ControllerReusable(userService, friendshipService, chatMessageService);
     }
 
     @PostMapping("")
@@ -59,13 +66,7 @@ public class GenreController {
         log.info("Game List: {}", gameDtos.size());
         model.addAttribute("gameDtos", gameDtos);
 
-        // Get latest 5 friends chats
-        if (principal != null) {
-            List<FriendshipDto> recentFriends = friendshipService
-                    .getAllAcceptedFriendships(principal.getName())
-                    .stream().limit(5).sorted().toList(); // or .sorted() based on recent messages
-            model.addAttribute("recentFriends", recentFriends);
-        }
+        controllerReusable.addFriendsAttributes(model, principal);
 
         return "genreShow";
     }

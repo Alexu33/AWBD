@@ -16,8 +16,6 @@ public interface PurchaseService {
 
     void deleteById(Long id);
 
-    List<GameDto> getOwnedGames(String username);
-
     void simulatePurchase(String senderUsername, Long receiverId, Long gameId);
 
     boolean hasUserPurchasedGame(Long userId, Long gameId);

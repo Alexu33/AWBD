@@ -41,6 +41,17 @@
     </h1>
 
 
+    <div sec:authorize="isAuthenticated()" id="my-profile" class="d-flex text">
+        <a th:href="@{'/users/' + ${currentUserId}}" class="blue-button p-2 d-block align-content-center me-2">
+            <i class="fa-solid fa-user pe-1"></i>
+            <span sec:authentication="name" class="fw-bold"></span>
+        </a>
+        <a th:href="@{/users/profile}" class="game-crud-button btn btn-sm btn-primary align-self-center">
+            <i class="fa-solid fa-pen"></i>
+        </a>
+    </div>
+
+
     <div class = "friends-list-div">
         <div sec:authorize="isAnonymous()">
             <h2 class = "text text-friends">
@@ -110,6 +121,9 @@
             <a class="text" th:href="@{'/publishers/' + ${gameDto.publisher.id}}">
                 <div th:text="${'Publisher: ' + gameDto.publisher.name}">Publisher</div>
             </a>
+            <a class="text" th:href="@{'/developers/' + ${gameDto.developer.id}}">
+                <div th:text="${'Developer: ' + gameDto.developer.name}">Developer</div>
+            </a>
             <div class="text" th:text="${'Release date: ' + gameDto.releaseDate}">Release date</div>
         </div>
 
@@ -120,6 +134,24 @@
                th:each="genre, stat : ${gameDto.genres}" th:text="${genre.name}">Genre</a>
         </div>
 
+        <br>
+
+        <form th:action="@{/purchases/buy}" method="post" class="text text-sec ms-auto me-auto">
+            <div style="display: contents;">
+                <input type="hidden" th:name="gameId" th:value="${gameDto.id}" />
+                <button type="submit" class="btn btn-success" style="width: 12em;">
+                    <i class="fa-solid fa-gift pe-1"></i>
+                    <span class="fw-bold">Buy for:</span>
+                </button>
+
+                <select name="receiverId" class="form-select">
+                    <option th:value="${currentUserId}" th:text="'(Myself)'"></option>
+                    <option th:each="f : ${friends}" th:value="${f.id}" th:text="${f.username}"></option>
+                </select>
+            </div>
+        </form>
+
+        <br>
         <br>
 
         <div class="text d-block w-100">
