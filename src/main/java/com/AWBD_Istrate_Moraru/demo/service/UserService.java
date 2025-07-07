@@ -1,5 +1,6 @@
 package com.AWBD_Istrate_Moraru.demo.service;
 
+import com.AWBD_Istrate_Moraru.demo.dto.UserCreateDto;
 import com.AWBD_Istrate_Moraru.demo.dto.UserDto;
 import org.springframework.stereotype.Service;
 
@@ -17,5 +18,5 @@ public interface UserService {
 
     Optional<UserDto> findByUsername(String username);
 
-
+    void updateUserFromProfile(String username, UserCreateDto userCreateDto);
 }

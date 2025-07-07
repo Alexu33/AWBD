@@ -93,4 +93,12 @@ public class PublisherController {
         publisherService.deleteById(id);
         return "redirect:/publishers";
     }
+
+
+    @RequestMapping("/form")
+    public String publisherForm(Model model) {
+        model.addAttribute("publisherDto", new PublisherDto());
+        return "publisherForm";
+    }
+
 }

@@ -83,6 +83,12 @@ public class DeveloperController {
         return "developerForm";
     }
 
+    @RequestMapping("/form")
+    public String developerForm(Model model) {
+        model.addAttribute("developerDto", new DeveloperDto());
+        return "developerForm";
+    }
+
     @RequestMapping("/delete/{id}")
     public String deleteById(@PathVariable Long id){
         developerService.deleteById(id);

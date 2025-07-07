@@ -104,7 +104,7 @@
                 <p class="game-title text" th:text="${gameDto.title}">Title</p>
                 <p class="game-desc text" th:text="${gameDto.description}">Description</p>
 
-                <div class="game-crud-buttons-div">
+                <div class="game-crud-buttons-div" sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{'/games/edit/' + ${gameDto.id}}" class="game-crud-button btn btn-sm btn-primary">
                         <i class="fa-solid fa-pen"></i>
                     </a>
