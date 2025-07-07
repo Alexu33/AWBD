@@ -71,7 +71,7 @@ body {
     background: rgb(193 218 255) !important
 }
 
-.sidebar, .site-title, .friends-list-div {
+.sidebar, .friends-list-div {
     padding: 30px;
     border-radius: 10px;
     background: rgba(100, 100, 200, 0.2);
