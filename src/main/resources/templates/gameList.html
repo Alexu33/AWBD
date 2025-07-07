@@ -99,6 +99,14 @@
             Add a new game
         </a>
 
+        <a th:href="@{'/developers'}" class="blue-button" sec:authorize="hasRole('ADMIN')">
+            See all developers
+        </a>
+
+        <a th:href="@{'/publishers'}" class="blue-button" sec:authorize="hasRole('ADMIN')">
+            See al publishers
+        </a>
+
         <div class="game-div" th:each="game, stat : ${gamePage.content}">
             <a th:href="@{'/games/' + ${game.id}}">
                 <div class="game-photo">
@@ -109,7 +117,7 @@
                 <p class="game-title text" th:text="${game.title}">Title</p>
                 <p class="game-desc text" th:text="${game.description}">Description</p>
 
-                <div class="game-crud-buttons-div">
+                <div class="game-crud-buttons-div" sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{'/games/edit/' + ${game.id}}" class="game-crud-button btn btn-sm btn-primary">
                         <i class="fa-solid fa-pen"></i>
                     </a>

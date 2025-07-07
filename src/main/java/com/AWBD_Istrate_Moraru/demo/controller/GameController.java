@@ -30,10 +30,11 @@ public class GameController {
     private ChatMessageService chatMessageService;
     private PurchaseService purchaseService;
     private UserService userService;
+    private DeveloperService developerService;
 
     private ControllerReusable controllerReusable;
 
-    public GameController(GameService gameService, GenreService genreService, PublisherService publisherService, ReviewService reviewService, FriendshipService friendshipService, ChatMessageService chatMessageService, PurchaseService purchaseService, UserService userService) {
+    public GameController(GameService gameService, GenreService genreService, PublisherService publisherService, ReviewService reviewService, FriendshipService friendshipService, ChatMessageService chatMessageService, PurchaseService purchaseService, UserService userService, DeveloperService developerService) {
         this.gameService = gameService;
         this.genreService = genreService;
         this.publisherService = publisherService;
@@ -42,6 +43,7 @@ public class GameController {
         this.chatMessageService = chatMessageService;
         this.purchaseService = purchaseService;
         this.userService = userService;
+        this.developerService = developerService;
 
         this.controllerReusable = new ControllerReusable(userService, friendshipService, chatMessageService);
     }
@@ -90,6 +92,9 @@ public class GameController {
         List<PublisherDto> publisherDtos = publisherService.findAll();
         model.addAttribute("publisherDtos", publisherDtos);
 
+        List<DeveloperDto> developerDtos = developerService.findAll();
+        model.addAttribute("developerDtos", developerDtos);
+
         model.addAttribute("gameDto", new GameDto());
         return "gameForm";
     }
@@ -101,6 +106,11 @@ public class GameController {
         if (gameDto.getPublisher() != null && gameDto.getPublisher().getId() != null) {
             PublisherDto publisher = publisherService.findById(gameDto.getPublisher().getId());
             gameDto.setPublisher(publisher);
+        }
+
+        if (gameDto.getDeveloper() != null && gameDto.getDeveloper().getId() != null) {
+            DeveloperDto developer = developerService.findById(gameDto.getDeveloper().getId());
+            gameDto.setDeveloper(developer);
         }
 
         gameService.save(gameDto);
@@ -125,6 +135,9 @@ public class GameController {
         List<PublisherDto> publisherDtos = publisherService.findAll();
         model.addAttribute("publisherDtos", publisherDtos);
 
+        List<DeveloperDto> developerDtos = developerService.findAll();
+        model.addAttribute("developerDtos", developerDtos);
+
         return "gameForm";
     }
 
@@ -140,6 +153,12 @@ public class GameController {
             PublisherDto publisher = publisherService.findById(gameDto.getPublisher().getId());
             gameDto.setPublisher(publisher);
         }
+
+        if (gameDto.getDeveloper() != null && gameDto.getDeveloper().getId() != null) {
+            DeveloperDto developer = developerService.findById(gameDto.getDeveloper().getId());
+            gameDto.setDeveloper(developer);
+        }
+
 
         gameService.save(gameDto);
         return "redirect:/games";

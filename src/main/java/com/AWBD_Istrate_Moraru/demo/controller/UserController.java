@@ -3,6 +3,7 @@ package com.AWBD_Istrate_Moraru.demo.controller;
 import com.AWBD_Istrate_Moraru.demo.dto.*;
 import com.AWBD_Istrate_Moraru.demo.service.*;
 import com.AWBD_Istrate_Moraru.demo.utils.ControllerReusable;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -91,14 +92,41 @@ public class UserController {
     public String profile(Model model, Principal principal) {
         if (principal != null) {
             UserDto userDto = userService.findByUsername(principal.getName()).orElseThrow(() -> new RuntimeException("User not found"));
-            model.addAttribute("userDto", userDto);
+            UserCreateDto userCreateDto = new UserCreateDto();
+            userCreateDto.setUsername(userDto.getUsername());
+            userCreateDto.setEmail(userDto.getEmail());
+            model.addAttribute("userCreateDto", userCreateDto);
 
-            List<GenreDto> genreDtos = genreService.findAll();
-            model.addAttribute("genreDtos", genreDtos);
+
+//            List<GenreDto> genreDtos = genreService.findAll();
+//            model.addAttribute("genreDtos", genreDtos);
 
             return "profile"; // Thymeleaf template name
         }
         return "redirect:/login";
     }
+
+    @PostMapping("/profile")
+    public String updateProfile(@ModelAttribute UserCreateDto userCreateDto, Principal principal, HttpServletRequest request) {
+        if (principal != null) {
+            boolean needsRefresh = false;
+            if(principal.getName() != userCreateDto.getUsername())
+            {
+                needsRefresh = true;
+            }
+
+            userService.updateUserFromProfile(principal.getName(), userCreateDto);
+
+            if(needsRefresh)
+            {
+                request.getSession().invalidate();
+
+                return "redirect:/login?usernameChanged";
+            }
+
+        }
+        return "redirect:/users/profile?success";
+    }
+
 
 }
