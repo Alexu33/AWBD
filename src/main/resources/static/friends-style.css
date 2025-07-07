@@ -1,0 +1,114 @@
+
+html, body {
+    height: 100%;
+}
+body {
+    padding: 15px;
+}
+
+
+.my-profile-div {
+    font-family: 'Cabin';
+
+    display: flex;
+    justify-content: center;
+    align-content: center;
+
+    width: fit-content;
+    box-sizing: border-box;
+    border-radius: 15px;
+
+    color: rgb(255, 255, 215);
+    padding: 15px;
+    background: rgba(0, 20, 80, 0.6);
+    box-shadow: 0px 6px rgba(30, 0, 60, 0.8);
+}
+
+#chatContainer * {
+    color: rgb(255, 255, 215);
+}
+#chatContainer {
+    box-sizing: border-box;
+    border-radius: 15px;
+    padding: 15px;
+    background: rgba(0, 20, 80, 0.6);
+    box-shadow: 0px 6px rgba(30, 0, 60, 0.8);
+}
+#chatContainer > .alert {
+    position: absolute;
+    top: 16px;
+    justify-self: anchor-center;
+}
+
+
+.friends-header {
+    box-sizing: border-box;
+    border-radius: 8px;
+    padding: 15px;
+    background: rgb(0, 60, 140, 0.6);
+    box-shadow: 0px 6px rgba(30, 0, 60, 0.8);
+    align-items: center;
+}
+
+.friends-list {
+    background: rgba(0, 20, 80, 0.6);
+    box-sizing: border-box;
+    border-radius: 8px;
+}
+.friends-list .blue-button {
+    text-align: start;
+}
+.friends-list li {
+    list-style: none;
+}
+
+
+.friend-request {
+    background: rgba(0, 20, 80, 0.6);
+    box-sizing: border-box;
+    border-radius: 8px;
+}
+
+#chatMessages {
+    background: rgb(0, 60, 140, 0.6);
+
+    box-sizing: border-box;
+    border-radius: 15px;
+}
+
+#chatBox strong {
+    text-shadow: -1px 1px black;
+}
+
+
+#addFriendDiv {
+    visibility: hidden;
+
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    align-content: center;
+}
+.add-friend-container {
+    width: max-content;
+    justify-self: center;
+
+    box-sizing: border-box;
+    border-radius: 15px;
+    padding: 15px;
+    background: rgb(0, 60, 140, 0.8);
+    box-shadow: 0px 6px rgba(30, 0, 60, 0.8);
+}
+.add-friend-close-btn {
+    display: flex !important;
+    margin-left: auto;
+}
+
+
+.input-group input, .alert {
+    color: black !important;
+}
