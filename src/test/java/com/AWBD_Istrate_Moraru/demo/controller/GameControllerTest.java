@@ -1,16 +1,13 @@
 package com.AWBD_Istrate_Moraru.demo.controller;
 
 import com.AWBD_Istrate_Moraru.demo.dto.*;
-import com.AWBD_Istrate_Moraru.demo.service.GameService;
-import com.AWBD_Istrate_Moraru.demo.service.GenreService;
-import com.AWBD_Istrate_Moraru.demo.service.PublisherService;
-import com.AWBD_Istrate_Moraru.demo.service.ReviewService;
+import com.AWBD_Istrate_Moraru.demo.service.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -31,20 +28,23 @@ class GameControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     GameService gameService;
 
-    @MockBean
+    @MockitoBean
     GenreService genreService;
 
-    @MockBean
+    @MockitoBean
     PublisherService publisherService;
 
-    @MockBean
+    @MockitoBean
+    DeveloperService developerService;
+
+    @MockitoBean
     ReviewService reviewService;
 
     @Test
-    @WithMockUser(username = "user", roles = {"USER"})
+    @WithMockUser(username = "Bideo James", roles = {"USER"})
     void getGamePage() throws Exception {
         List<GameDto> gameDtos = List.of(new GameDto());
         PageImpl<GameDto> gamePage = new PageImpl<>(gameDtos);
@@ -62,21 +62,27 @@ class GameControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user", roles = {"USER"})
+    @WithMockUser(username = "Bideo James", roles = {"USER"})
     void gameShow() throws Exception {
         long publisherId = 1L;
         PublisherDto publisherDto = new PublisherDto();
         publisherDto.setId(publisherId);
 
+        long developerId = 1L;
+        DeveloperDto developerDto = new DeveloperDto();
+        developerDto.setId(developerId);
+
         long gameId = 1L;
         GameDto gameDto = new GameDto();
         gameDto.setId(gameId);
         gameDto.setPublisher(publisherDto);
+        gameDto.setDeveloper(developerDto);
 
         when(gameService.findById(gameId)).thenReturn(gameDto);
         when(genreService.findAll()).thenReturn(Collections.emptyList());
         when(reviewService.findAllByGameId(gameId)).thenReturn(Collections.emptyList());
         when(publisherService.findById(publisherId)).thenReturn(publisherDto);
+        when(developerService.findById(developerId)).thenReturn(developerDto);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/games/{id}", gameId))
                .andExpect(status().isOk())

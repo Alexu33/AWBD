@@ -12,8 +12,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
-@ActiveProfiles("postgres")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("h2test")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @Slf4j
 public class GameRepositoryTest {
     GameRepository gameRepository;
@@ -35,6 +35,14 @@ public class GameRepositoryTest {
         List<Game> games = gameRepository.findByGenres_Id(1L);
         assertTrue(games.size() >= 1);
         log.info("findByGenres_Id ...");
+        games.forEach(game -> log.info(game.getTitle()));
+    }
+
+    @Test
+    public void findGames() {
+        List<Game> games = gameRepository.findAll();
+        assertTrue(games.size() >= 1);
+        log.info("findAll ...");
         games.forEach(game -> log.info(game.getTitle()));
     }
 

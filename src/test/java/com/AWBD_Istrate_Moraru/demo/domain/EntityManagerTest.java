@@ -10,14 +10,14 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-@ActiveProfiles("postgres")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("h2test")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 public class EntityManagerTest {
     @PersistenceContext
     private EntityManager entityManager;
 
     @Test
-    public void findProduct() {
+    public void findGame() {
         System.out.println(entityManager.getEntityManagerFactory());
         Game game = entityManager.find(Game.class, 143L);
         assertEquals(game.getTitle(), "Terroria");
