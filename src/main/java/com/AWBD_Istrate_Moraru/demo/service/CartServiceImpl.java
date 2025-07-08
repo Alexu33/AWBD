@@ -39,12 +39,23 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public CartDto findByUserId(Long userId) {
+        Optional<Cart> cartOpt = cartRepository.findByUserId(userId);
+
+        if (cartOpt.isEmpty()) {
+            throw new RuntimeException("Cart not found");
+        }
+
+        return cartMapper.toCartDto(cartOpt.get());
+    }
+
+    @Override
     public List<CartDto> findAll() {
         List<Cart> carts = cartRepository.findAll();
 
         return carts.stream()
-                    .map(d -> cartMapper.toCartDto(d))
-                    .collect(Collectors.toList());
+                .map(d -> cartMapper.toCartDto(d))
+                .collect(Collectors.toList());
     }
 
     @Override

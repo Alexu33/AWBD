@@ -1,9 +1,14 @@
 package com.AWBD_Istrate_Moraru.demo.config;
 
+import com.AWBD_Istrate_Moraru.demo.security.CustomUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -13,30 +18,38 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 public class SecurityConfig {
 
+    CustomUserDetailsService customUserDetailsService;
+
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+        this.customUserDetailsService = customUserDetailsService;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.disable())
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf->csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
-                );
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.requestMatchers(
+                                "/register",
+                                "/login",
+                                "/games",
+                                "/webjars/**",
+                                "/*.css", "/*.js", "/*.jpg", "/*.png", "/*.ico").permitAll()
+                        .requestMatchers("/friendships/**").authenticated()
+                        .anyRequest().authenticated())
+                .formLogin(form -> form.loginPage("/login")
+                        .defaultSuccessUrl("/games", true).permitAll())
+                .logout(logout -> logout.logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout").permitAll());
         return http.build();
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowCredentials(false);
-//        configuration.addAllowedOriginPattern("*");
-//        configuration.addAllowedHeader("*");
-//        configuration.addAllowedMethod("*");
-
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
 }

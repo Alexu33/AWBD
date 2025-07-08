@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,11 +18,12 @@ public class GameDto {
     private Long id;
     private String title;
     private String description;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
     private BigDecimal price;
     private PublisherDto publisher;
     private DeveloperDto developer;
+    private List<Long> genreIds;
     private List<GenreDto> genres;
-    private List<CartDto> carts;
     private Double averageRating;
 }

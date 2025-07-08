@@ -11,9 +11,15 @@ import com.AWBD_Istrate_Moraru.demo.repository.UserRepository;
 import com.AWBD_Istrate_Moraru.demo.utils.FriendshipStatus;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor()
@@ -26,10 +32,10 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final UserMapper userMapper;
 
     @Override
-    public ChatMessageDto saveMessage(ChatMessageDto dto, String senderUsername) {
+    public ChatMessageDto saveMessage(String senderUsername, Long receiverId, String content) {
         User sender = userRepository.findByUsername(senderUsername)
                 .orElseThrow(() -> new UsernameNotFoundException("Sender not found"));
-        User receiver = userRepository.findById(dto.getReceiver().getId())
+        User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new EntityNotFoundException("Receiver not found"));
 
         boolean areFriends = friendshipRepository.existsBySenderAndReceiverAndStatus(sender, receiver, FriendshipStatus.ACCEPTED)
@@ -39,10 +45,35 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             throw new AccessDeniedException("You can only message your friends.");
         }
 
-        ChatMessage message = chatMessageMapper.toEntity(dto);
+        ChatMessage message = new ChatMessage();
+        message.setSender(sender);
+        message.setReceiver(receiver);
+        message.setContent(content);
+        message.setSentAt(LocalDateTime.now());
 
         ChatMessage saved = chatMessageRepository.save(message);
         return chatMessageMapper.toDto(saved);
+    }
+
+    @Override
+    public List<ChatMessageDto> getChatBetweenUsers(String username, Long otherUserId) {
+        User user = userRepository.findByUsername(username).orElseThrow();
+        User other = userRepository.findById(otherUserId).orElseThrow();
+        List<ChatMessage> messages = chatMessageRepository
+                .findBySenderAndReceiverOrSenderAndReceiver(user, other, other, user);
+
+        return messages.stream().map(chatMessageMapper::toDto).toList();
+    }
+
+    @Override
+    public Optional<ChatMessageDto> getLastMessageBetween(String username, Long friendId) {
+        List<ChatMessageDto> result = getChatBetweenUsers(username, friendId);
+
+        if (result.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(result.get(0));
     }
 
 }

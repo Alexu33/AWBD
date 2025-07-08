@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByUserUsername(String username);
+
+    List<Review> findAllByGameId(Long gameId);
 }

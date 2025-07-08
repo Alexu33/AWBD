@@ -12,5 +12,7 @@ public interface GenreService {
 
     List<GenreDto> findAll();
 
+    List<GenreDto> findAllByIds(List<Long> ids);
+
     void deleteById(Long id);
 }

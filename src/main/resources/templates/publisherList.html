@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Publisher List</title>
+  <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="/webjars/font-awesome/6.5.2/css/all.min.css"/>
+</head>
+<body>
+<div class="container">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="nav-link" th:href="@{'/'}"><i class="fas fa-home mx-1"></i></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto topnav">
+        <li class="nav-item">
+          <a class="nav-link active" th:href="@{'/publishers'}">Publishers</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn-primary" th:href="@{'/publishers/form'}">
+            <i class="fas fa-plus-circle"></i> Add Publisher
+          </a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ms-auto topnav">
+        <li class="nav-item">
+          <a class="nav-link btn-primary" th:href="@{/games}">
+            <i class="fas fa-home"></i> Back to main page
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</div>
+
+<div class="container mt-4">
+  <h2 class="my-4">Publishers</h2>
+  <table class="table table-hover">
+    <thead class="thead-inverse">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Website</th>
+      <th></th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="publisher, stat : ${publisherDtos}"
+        th:class="${stat.odd}? 'table-light':''">
+      <td th:text="${publisher.id}">1</td>
+      <td th:text="${publisher.name}">Name</td>
+      <td th:text="${publisher.website}">Website</td>
+      <td>
+        <a th:href="@{'/publishers/edit/' + ${publisher.id}}">
+          <i class="fa-solid fa-pen"></i>
+        </a>
+      </td>
+      <td>
+        <a th:href="@{'/publishers/delete/' + ${publisher.id}}">
+          <i class="fa-solid fa-trash"></i>
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

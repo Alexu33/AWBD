@@ -4,6 +4,8 @@ import com.AWBD_Istrate_Moraru.demo.dto.GameDto;
 import com.AWBD_Istrate_Moraru.demo.entity.Game;
 import com.AWBD_Istrate_Moraru.demo.mapper.GameMapper;
 import com.AWBD_Istrate_Moraru.demo.repository.GameRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,7 +50,40 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    public List<GameDto> findAllByGenreId(Long genreId) {
+        List<Game> games = gameRepository.findByGenres_Id(genreId);
+
+        return games.stream()
+                .map(d -> gameMapper.toDto(d))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GameDto> findAllByPublisherId(Long publisherId) {
+        List<Game> games = gameRepository.findByPublisher_Id(publisherId);
+
+        return games.stream()
+                .map(d -> gameMapper.toDto(d))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GameDto> findAllByDeveloperId(Long developerId) {
+        List<Game> games = gameRepository.findByDeveloper_Id(developerId);
+
+        return games.stream()
+                .map(d -> gameMapper.toDto(d))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void deleteById(Long id) {
         gameRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<GameDto> findPaginated(Pageable pageable) {
+        Page<Game> gamePage = gameRepository.findAll(pageable);
+        return gamePage.map(gameMapper::toDto);
     }
 }
