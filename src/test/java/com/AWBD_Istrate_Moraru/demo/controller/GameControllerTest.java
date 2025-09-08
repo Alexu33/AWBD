@@ -163,4 +163,25 @@ class GameControllerTest {
 
         verify(gameService).deleteById(1L);
     }
+
+    @Test
+    @WithMockUser
+    void gameFormPost_emptyGenre() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/games/new")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/games"));
+    }
+
+    @Test
+    @WithMockUser
+    void editPost_invalidId() throws Exception {
+        when(genreService.findAllByIds(anyList())).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/games/edit/{id}", -1L)
+                        .param("genreIds", "1")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/games"));
+    }
 }

@@ -46,4 +46,16 @@ public class GameRepositoryTest {
         games.forEach(game -> log.info(game.getTitle()));
     }
 
+    @Test
+    public void findGamesByDeveloperId() {
+        List<Game> games = gameRepository.findByDeveloper_Id(1L);
+        assertTrue(games.size() >= 1);
+        games.forEach(game -> log.info(game.getTitle()));
+    }
+
+    @Test
+    public void findGamesByTitleLike() {
+        List<Game> games = gameRepository.findByTitleLike("%Terr%");
+        assertTrue(games.size() >= 1);
+    }
 }
