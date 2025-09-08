@@ -107,6 +107,31 @@
             See al publishers
         </a>
 
+
+        <form method="get" class="text" th:action="@{/games}" style="float: right; margin-top: -64px;">
+            <input type="hidden" name="page" value="1" />
+            <input type="hidden" name="size" value="3" />
+
+            <button class="blue-button" type="submit" style="padding-top: 0px; padding-bottom: 0px; margin-right: 12px;">
+                Sort
+            </button>
+
+            <select name="sortCrit" id="sortCrit">
+                <option value="releaseDate"
+                        th:selected="${currentSort == 'releaseDate'}">Release Date</option>
+                <option value="title"
+                        th:selected="${currentSort == 'title'}">Title</option>
+                <option value="price"
+                        th:selected="${currentSort == 'price'}">Price</option>
+            </select>
+
+            <select name="sortDir" id="sortDir">
+                <option value="ASC" th:selected="${currentDir == 'ASC'}">[Ascending]</option>
+                <option value="DESC" th:selected="${currentDir == 'DESC'}">[Descending]</option>
+            </select>
+        </form>
+
+
         <div class="game-div" th:each="game, stat : ${gamePage.content}">
             <a th:href="@{'/games/' + ${game.id}}">
                 <div class="game-photo">
@@ -134,12 +159,12 @@
             <ul class="pagination">
                 <li class="page-item">
                     <a th:if="${gamePage.number > 0}"
-                       th:href="@{/games(size=${gamePage.size}, page=${gamePage.number})}"
+                       th:href="@{/games(size=${gamePage.size}, page=${gamePage.number}, sortCrit=${currentSort}, sortDir=${currentDir})}"
                        class="page-link my-page-link" >
                         &lt;
                     </a>
                     <div th:if="${gamePage.number <= 0}"
-                       th:href="@{/games(size=${gamePage.size}, page=${gamePage.number})}"
+                       th:href="@{/games(size=${gamePage.size}, page=${gamePage.number}, sortCrit=${currentSort}, sortDir=${currentDir})}"
                        class="page-link my-page-link disabled" >
                         &lt;
                     </div>
@@ -149,7 +174,7 @@
                     th:class="${pageNumber==gamePage.number + 1} ? 'page-item active':   'page-item'">
                     <a class="page-link my-page-link"
                        th:text="${pageNumber}"
-                       th:href="@{/games(size=${gamePage.size}, page=${pageNumber})}">
+                       th:href="@{/games(size=${gamePage.size}, page=${pageNumber}, sortCrit=${currentSort}, sortDir=${currentDir})}">
                         1
                     </a>
                 </li>
@@ -163,12 +188,12 @@
 
                 <li class="page-item">
                     <a th:if="${gamePage.number < gamePage.totalPages - 1}"
-                       th:href="@{/games(size=${gamePage.size}, page=${gamePage.number+2})}"
+                       th:href="@{/games(size=${gamePage.size}, page=${gamePage.number+2}, sortCrit=${currentSort}, sortDir=${currentDir})}"
                        class="page-link my-page-link" >
                         &gt;
                     </a>
                     <div th:if="${gamePage.number >= gamePage.totalPages - 1}"
-                       th:href="@{/games(size=${gamePage.size}, page=${gamePage.number+2})}"
+                       th:href="@{/games(size=${gamePage.size}, page=${gamePage.number+2}, sortCrit=${currentSort}, sortDir=${currentDir})}"
                        class="page-link my-page-link disabled" >
                         &gt;
                     </div>

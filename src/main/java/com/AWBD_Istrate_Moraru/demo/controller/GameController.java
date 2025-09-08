@@ -7,6 +7,7 @@ import com.AWBD_Istrate_Moraru.demo.utils.ControllerReusable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,13 +53,23 @@ public class GameController {
     public String getGamePage(Model model,
                                @RequestParam("page") Optional<Integer> page,
                                @RequestParam("size") Optional<Integer> size,
+                               @RequestParam("sortCrit") Optional<String> scrit,
+                               @RequestParam("sortDir") Optional<String> sdir,
                                Principal principal) {
         int currentPage = page.orElse(1);
-        int pageSize = size.orElse(5);
+        int pageSize = size.orElse(3);
+        String sortCrit = scrit.orElse("releaseDate");
+        Sort.Direction sortDir = sdir.map(Sort.Direction::fromString)
+                                     .orElse(Sort.Direction.ASC);
 
-        Page<GameDto> gamePage = gameService.findPaginated(PageRequest.of(currentPage - 1, pageSize));
+        Page<GameDto> gamePage = gameService.findPaginated(
+                PageRequest.of(currentPage - 1, pageSize,
+                Sort.by(sortDir, sortCrit))
+        );
 
         model.addAttribute("gamePage", gamePage);
+        model.addAttribute("currentSort", sortCrit);
+        model.addAttribute("currentDir", sortDir.toString());
 
         List<GenreDto> genreDtos = genreService.findAll();
         model.addAttribute("genreDtos", genreDtos);
